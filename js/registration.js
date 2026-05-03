@@ -295,5 +295,5 @@ function submit() {
     } else {
       window.location.href = 'profile.html?id=' + teamId;
     }
-  }, 300);
+  }, 600);
 }
