@@ -1,0 +1,20 @@
+.page { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.conf-wrap { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+#conf-patch { filter: drop-shadow(0 0 36px rgba(240,165,0,.35)); animation: float 4.5s ease-in-out infinite; }
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-9px); }
+}
+.conf-msg {
+  font-family: var(--font-m); font-size: 11px;
+  letter-spacing: .18em; color: var(--offwhite); line-height: 2.2;
+}
+.conf-highlight {
+  font-family: var(--font-d); font-size: 18px;
+  letter-spacing: .18em; color: var(--amber); display: block; margin: 4px 0;
+}
+.conf-return {
+  font-size: 9px; letter-spacing: .3em; color: var(--amber-dk); margin-top: 8px;
+}
+.conf-return span { cursor: pointer; }
+.conf-return span:hover { color: var(--amber); }
