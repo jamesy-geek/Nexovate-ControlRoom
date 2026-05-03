@@ -52,8 +52,8 @@ body {
   position: fixed; inset: 0; z-index: 9999; display: none;
 }
 #static-canvas { width: 100%; height: 100%; display: block; }
-.lbl   { font-size: 9px;  letter-spacing: .45em; color: var(--amber-dk); display: block; }
-.ttl   { font-family: var(--font-d); font-size: 26px; font-weight: 900;
+.lbl, .section-lbl { font-size: 9px;  letter-spacing: .45em; color: var(--amber-dk); display: block; }
+.ttl, .section-ttl { font-family: var(--font-d); font-size: 26px; font-weight: 900;
          letter-spacing: .18em; color: var(--offwhite); text-transform: uppercase; }
 .mono  { font-family: var(--font-m); }
 .amber { color: var(--amber); }

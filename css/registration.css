@@ -24,9 +24,23 @@
 .reg-step.on { display: block; }
 
 /* Prompt text */
-.step-prompt {
+.step-ind {
+  font-size: 8px;
+  letter-spacing: .4em;
+  color: var(--amber-dk);
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+.reg-prompt {
   font-size: 11px; letter-spacing: .12em; color: var(--amber-dk);
   line-height: 1.9; white-space: pre-line; margin-bottom: 20px;
+}
+.fp-lbl {
+  font-size: 8px;
+  letter-spacing: .3em;
+  color: var(--amber-dk);
+  margin-bottom: 6px;
+  margin-top: 12px;
 }
 
 /* Input */
@@ -39,6 +53,7 @@
 }
 .reg-input:focus { border-bottom-color: var(--amber); }
 .reg-input::placeholder { color: rgba(200,136,42,0.4); font-size: 11px; letter-spacing: .2em; }
+
 @keyframes shake {
   0%,100% { transform: translateX(0); }
   25%      { transform: translateX(-4px); }

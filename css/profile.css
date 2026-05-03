@@ -1,4 +1,5 @@
 /* ─── profile.css ─────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
 
 .profile-page {
   display: flex;
@@ -376,11 +377,18 @@
 
 /* Responsive */
 @media (max-width: 600px) {
-  .prof-card { padding: 20px 16px 18px; }
+  .profile-page { padding: 40px 10px; }
+  .prof-card { padding: 64px 16px 24px; } /* More top padding for absolute buttons */
+  
   .prof-timer-dig { font-size: 28px; }
   .prof-team-name { font-size: 20px; }
-  .prof-info-grid { grid-template-columns: 1fr; }
-  .prof-bottom-row { flex-direction: column; align-items: center; }
+  
+  .prof-info-grid { grid-template-columns: 1fr; gap: 12px; }
+  .prof-info-val.big { font-size: 16px; }
+  
+  .prof-bottom-row { flex-direction: column; align-items: center; gap: 24px; }
+  .prof-patch-wrap { width: 100%; text-align: center; }
+  .prof-qr-wrap { width: 100%; align-items: center; }
 
   .prof-event-item {
     flex-direction: column;
@@ -389,5 +397,12 @@
   }
   .prof-event-name {
     margin-left: 0;
+    font-size: 10px;
+  }
+  
+  .prof-home-btn, .prof-logout-btn {
+    top: 12px;
+    padding: 6px 12px;
+    font-size: 9px;
   }
 }

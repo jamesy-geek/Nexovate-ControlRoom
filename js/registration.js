@@ -6,7 +6,8 @@ const S = {
   crew:         '',
   inst:         '',
   events:       [],   // array of { op, evt, evtId } — one entry per selected event
-  stepVisited:  [false, false, false, false]
+  stepVisited:  [false, false, false, false],
+  gngTimers:    []
 };
 
 const STEP_PROMPTS = [
@@ -192,6 +193,10 @@ function clearErr(el) {
 }
 
 function runGoNoGo() {
+  // Clear any existing timers
+  S.gngTimers.forEach(clearTimeout);
+  S.gngTimers = [];
+
   const evtSummary = S.events.map(e => e.evt).join(' · ');
 
   const items = [
@@ -200,8 +205,21 @@ function runGoNoGo() {
     { id: 'g3', vid: 'gv3', val: evtSummary || '—' },
     { id: 'g4', vid: 'gv4', val: 'CONFIRMED' },
   ];
+
+  // Reset state
+  items.forEach(it => {
+    const row = document.getElementById(it.id);
+    const val = document.getElementById(it.vid);
+    if (row) row.classList.remove('go');
+    if (val) { val.classList.remove('go'); val.textContent = 'PENDING…'; }
+  });
+  const fin = document.getElementById('gng-final');
+  if (fin) fin.style.opacity = '0';
+  const btn = document.getElementById('launch-btn');
+  if (btn) btn.style.display = 'none';
+
   items.forEach(({ id, vid, val }, i) => {
-    setTimeout(() => {
+    const t = setTimeout(() => {
       const row   = document.getElementById(id);
       const valEl = document.getElementById(vid);
       if (!row || !valEl) return;
@@ -210,15 +228,18 @@ function runGoNoGo() {
       row.classList.add('go');
       if (typeof playTypeKey === 'function') playTypeKey();
     }, 600 * (i + 1));
+    S.gngTimers.push(t);
   });
-  setTimeout(() => {
+
+  S.gngTimers.push(setTimeout(() => {
     const fin = document.getElementById('gng-final');
     if (fin) fin.style.opacity = '1';
-  }, 3200);
-  setTimeout(() => {
+  }, 3200));
+
+  S.gngTimers.push(setTimeout(() => {
     const btn = document.getElementById('launch-btn');
     if (btn) btn.style.display = 'block';
-  }, 3600);
+  }, 3600));
 }
 
 function submit() {
