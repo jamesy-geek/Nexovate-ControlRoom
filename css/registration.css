@@ -154,3 +154,10 @@
     gap: 10px;
   }
 }
+
+@media (max-width: 380px) {
+  .reg-panel { padding: 16px 12px; }
+  .reg-prompt { font-size: 10px; line-height: 1.7; }
+  .gng-list { font-size: 9px; }
+  .gng-val.go { font-size: 10px; }
+}

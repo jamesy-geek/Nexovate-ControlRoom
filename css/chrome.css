@@ -56,6 +56,10 @@
     opacity: 0.45;
   }
 }
+@media (max-width: 360px) {
+  #tminus { padding: 4px 8px 5px; }
+  #tminus-dig { font-size: 13px; letter-spacing: 0.05em; }
+}
 #nav-dots {
   position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
   display: flex; flex-direction: column; gap: 14px; z-index: 200;
