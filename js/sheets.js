@@ -19,6 +19,7 @@ async function postToSheets(teamData, email) {
     eventId: evt.evtId,
     eventName: evt.evt,
     teamName: teamData.crew,
+    crewNum:  teamData.crewNum || 1,
     leadName: teamData.lead || '',
     phone: teamData.phone || '',
     email: email || '',

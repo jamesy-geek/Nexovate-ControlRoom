@@ -42,8 +42,8 @@ function renderProfile(team, root, email) {
   const evt = isMulti ? null : getEvtDetail(events[0].evtId);
   const profileURL = window.location.origin + '/profile.html?id=' + team.id;
 
-  // Sequential team number from ID
-  const teamNum = parseInt(team.id.replace('NXV-', ''), 36) % 999 + 1;
+  // Sequential team number (Prioritize saved crewNum, fallback to ID calculation)
+  const teamNum = team.crewNum || (parseInt(team.id.replace('NXV-', ''), 36) % 999 + 1);
 
   root.innerHTML = `
     <!-- Announcement ticker -->

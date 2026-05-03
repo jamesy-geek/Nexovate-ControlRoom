@@ -249,11 +249,27 @@ function runGoNoGo() {
   }, 4800));
 }
 
-function submit() {
+async function submit() {
   const teamId = 'NXV-' + Date.now().toString(36).toUpperCase();
+  let crewNum = 1;
+
+  // Try to get sequential number from Supabase
+  if (window.supabaseClient) {
+    try {
+      const { count, error } = await window.supabaseClient
+        .from('teams')
+        .select('*', { count: 'exact', head: true });
+      if (!error && count !== null) {
+        crewNum = count + 1;
+      }
+    } catch (e) {
+      console.warn('[registration.js] Could not fetch team count, using default.', e);
+    }
+  }
 
   const teamData = {
     id:        teamId,
+    crewNum:   crewNum, 
     crew:      S.crew,
     lead:      S.lead,
     phone:     S.phone,
