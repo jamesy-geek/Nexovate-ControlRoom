@@ -2,11 +2,6 @@
 // Manages module selection and file panel updates in dossier.html
 
 function selMod(id) {
-  // If hacksprint: navigate to that page instead
-  if (id === 'hacksprint') {
-    staticCut(() => { window.location.href = 'hacksprint.html'; });
-    return;
-  }
   playBlip();
   // Deselect all
   document.querySelectorAll('.mod-g, .reactor-g').forEach(g => g.classList.remove('sel'));
@@ -34,7 +29,6 @@ function selMod(id) {
     </div>
     <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div class="fp-status">STATUS: ACCEPTING CREW APPLICATIONS</div>
-    <button class="btn btn-file" onclick="regFor('${id}')">SUBMIT CREW MANIFEST</button>
   `;
 }
 
