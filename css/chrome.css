@@ -33,7 +33,29 @@
   color: var(--amber); letter-spacing: .12em;
   text-shadow: 0 0 18px rgba(240,165,0,.4);
 }
-@media (max-width: 768px) { #tminus-dig { font-size: 15px; } }
+@media (max-width: 768px) {
+  #tminus-dig { font-size: 15px; }
+
+  /* Prevent tminus from overflowing viewport width */
+  #tminus {
+    max-width: calc(100vw - 40px);
+    padding: 4px 14px 6px;
+  }
+
+  /* Shrink label to save vertical space */
+  #tminus-lbl {
+    font-size: 7px;
+    letter-spacing: .25em;
+  }
+
+  /* Move sound button below ticker, left side — avoids tminus overlap */
+  #sound-btn {
+    top: 30px;
+    right: auto;
+    left: 10px;
+    opacity: 0.45;
+  }
+}
 #nav-dots {
   position: fixed; right: 22px; top: 50%; transform: translateY(-50%);
   display: flex; flex-direction: column; gap: 14px; z-index: 200;

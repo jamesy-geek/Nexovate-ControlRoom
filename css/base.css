@@ -30,6 +30,12 @@ body {
 }
 @media (max-width: 768px) {
   .page { padding: 90px 20px 80px; }
+
+  /* Prevent Orbitron display titles overflowing on narrow screens */
+  .ttl {
+    font-size: clamp(16px, 5.5vw, 26px);
+    letter-spacing: .1em;
+  }
 }
 #scanlines {
   position: fixed; inset: 0; pointer-events: none; z-index: 9998;

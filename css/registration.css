@@ -120,4 +120,22 @@
     padding: 14px 12px;
     min-height: 52px;
   }
+
+  /* Ensure panel doesn't overflow on 320px devices */
+  .reg-panel {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* GO/NO-GO final text scale */
+  .gng-final-text {
+    font-size: 12px;
+    letter-spacing: .16em;
+  }
+
+  /* Confirmation step action row: stack buttons on mobile */
+  .reg-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
 }

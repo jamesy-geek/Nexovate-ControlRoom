@@ -42,3 +42,14 @@ function regFor(id) {
   sessionStorage.setItem('preselect', id);
   navigate('registration');
 }
+
+// Mobile module list — highlight selected item
+function mmlSel(el) {
+  document.querySelectorAll('.mml-item').forEach(function(i) { i.classList.remove('sel'); });
+  el.classList.add('sel');
+  // Scroll file panel into view on mobile
+  var fp = document.getElementById('file-panel');
+  if (fp && window.innerWidth <= 768) {
+    setTimeout(function() { fp.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 120);
+  }
+}

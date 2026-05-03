@@ -6,9 +6,7 @@
   border: 1px solid rgba(240,165,0,.18);
   min-height: 500px; flex: 1;
 }
-@media (max-width: 768px) {
-  .dossier-grid { grid-template-columns: 1fr; }
-}
+
 .sch-panel {
   border-right: 1px solid rgba(240,165,0,.18);
   padding: 20px; position: relative; overflow: hidden;
@@ -17,8 +15,167 @@
     linear-gradient(90deg, rgba(74,110,138,.055) 1px, transparent 1px);
   background-size: 36px 36px;
 }
+/* ── MOBILE MODULE LIST (hidden on desktop) ── */
+#mobile-module-list {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  .sch-panel { border-right: none; border-bottom: 1px solid rgba(240,165,0,.18); height: 300px; }
+  /* Grid stacks: module list → file panel */
+  .dossier-grid {
+    grid-template-columns: 1fr;
+    border: none;
+    gap: 0;
+    min-height: unset;
+  }
+
+  /* Hide SVG schematic on mobile — untappable at this scale */
+  .sch-panel {
+    display: none;
+  }
+
+  /* Show mobile module list instead */
+  #mobile-module-list {
+    display: block;
+    border: 1px solid rgba(240,165,0,.18);
+    background: rgba(240,165,0,.015);
+    margin-bottom: 0;
+  }
+
+  .mml-lbl {
+    font-size: 8px;
+    letter-spacing: .35em;
+    color: var(--amber-dk);
+    padding: 10px 16px 6px;
+    display: block;
+    border-bottom: 1px solid rgba(240,165,0,.1);
+  }
+
+  .mml-section {
+    font-size: 7px;
+    letter-spacing: .4em;
+    color: var(--blue);
+    padding: 8px 16px 4px;
+    opacity: .7;
+  }
+
+  .mml-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(240,165,0,.08);
+    cursor: pointer;
+    transition: background 0.15s;
+    min-height: 56px; /* large tap target */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mml-item:active {
+    background: rgba(240,165,0,.08);
+  }
+
+  .mml-item.sel {
+    background: rgba(240,165,0,.07);
+    border-bottom-color: rgba(240,165,0,.2);
+  }
+
+  .mml-item.sel .mml-op {
+    color: var(--amber);
+  }
+
+  .mml-item.nt { /* non-technical: blue accent */
+    border-left: 2px solid transparent;
+  }
+
+  .mml-item.nt.sel {
+    border-left-color: var(--blue);
+    background: rgba(74,110,138,.07);
+  }
+
+  .mml-item.nt .mml-op {
+    color: var(--blue);
+  }
+
+  .mml-item.nt.sel .mml-op {
+    color: var(--offwhite);
+  }
+
+  .mml-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .mml-op {
+    font-family: var(--font-d);
+    font-size: 11px;
+    letter-spacing: .18em;
+    color: var(--amber-dk);
+  }
+
+  .mml-nm {
+    font-size: 9px;
+    letter-spacing: .14em;
+    color: var(--amber-dk);
+    opacity: .7;
+  }
+
+  .mml-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .mml-id {
+    font-size: 7px;
+    letter-spacing: .3em;
+    color: rgba(240,165,0,.4);
+  }
+
+  .mml-prize {
+    font-family: var(--font-d);
+    font-size: 10px;
+    color: var(--amber);
+  }
+
+  .mml-arrow {
+    font-size: 12px;
+    color: var(--amber-dk);
+    opacity: .4;
+    margin-left: 10px;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+
+  .mml-item.sel .mml-arrow {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+
+  /* File panel: fixed height so it always shows, scrollable */
+  .file-panel {
+    border: 1px solid rgba(240,165,0,.18);
+    border-top: none;
+    min-height: 280px;
+    max-height: 60vh;
+    overflow-y: auto;
+    font-size: 11px;
+  }
+
+  /* Footer button: full width on mobile */
+  .dossier-footer {
+    margin-top: 16px;
+  }
+
+  .dossier-footer .btn-primary {
+    width: 100%;
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    padding: 16px 20px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
 }
 .sch-lbl { font-size: 8px; letter-spacing: .35em; color: var(--amber-dk); margin-bottom: 14px; display: block; }
 #schematic-svg { width: 100%; height: auto; }

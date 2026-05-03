@@ -27,6 +27,136 @@
     </div>
 
     <div class="dossier-grid">
+      <!-- MOBILE MODULE LIST — shown instead of SVG schematic on small screens -->
+      <div id="mobile-module-list">
+        <span class="mml-lbl">NEXOVATE 2026 · SELECT MODULE TO ACCESS MISSION FILE</span>
+      
+        <div class="mml-section">── TECHNICAL OPERATIONS ──</div>
+      
+        <div class="mml-item" id="mml-roborace" onclick="selMod('roborace'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">IRONCLAD</span>
+            <span class="mml-nm">ROBO RACE</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">A-1</span>
+            <span class="mml-prize">₹30K</span>
+          </div>
+          <span class="mml-arrow">›</span>
+        </div>
+      
+        <div class="mml-item" id="mml-robosoccer" onclick="selMod('robosoccer'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">GRIDLOCK</span>
+            <span class="mml-nm">ROBO SOCCER</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">A-2</span>
+            <span class="mml-prize">₹30K</span>
+          </div>
+          <span class="mml-arrow">›</span>
+        </div>
+      
+        <div class="mml-item" id="mml-robosumo" onclick="selMod('robosumo'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">IMMOVABLE</span>
+            <span class="mml-nm">ROBO SUMO · PRIORITY</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">A-3</span>
+            <span class="mml-prize">₹20K</span>
+          </div>
+          <span class="mml-arrow">›</span>
+        </div>
+      
+        <div class="mml-item" id="mml-linefollower" onclick="selMod('linefollower'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">THREADLINE</span>
+            <span class="mml-nm">LINE FOLLOWER</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">A-4</span>
+            <span class="mml-prize">₹20K</span>
+          </div>
+          <span class="mml-arrow">›</span>
+        </div>
+      
+        <div class="mml-item" id="mml-maze" onclick="selMod('maze'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">LABYRINTH</span>
+            <span class="mml-nm">MAZE</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">A-5</span>
+            <span class="mml-prize">₹20K</span>
+          </div>
+          <span class="mml-arrow">›</span>
+        </div>
+      
+        <div class="mml-item" id="mml-hacksprint" onclick="selMod('hacksprint'); mmlSel(this)"
+             style="border-top: 1px solid rgba(240,165,0,.25); background: rgba(240,165,0,.02);">
+          <div class="mml-left">
+            <span class="mml-op" style="color: var(--amber);">CORE · HACKSPRINT</span>
+            <span class="mml-nm">[ OMEGA PROTOCOL ]</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">OMEGA</span>
+            <span class="mml-prize">₹50K</span>
+          </div>
+          <span class="mml-arrow">›</span>
+        </div>
+      
+        <div class="mml-section" style="margin-top: 4px;">── GROUND OPERATIONS ──</div>
+      
+        <div class="mml-item nt" id="mml-brandrumbling" onclick="selMod('brandrumbling'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">SIGNAL</span>
+            <span class="mml-nm">BRAND RUMBLE</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">B-1</span>
+            <span class="mml-prize" style="color: var(--blue);">₹10K</span>
+          </div>
+          <span class="mml-arrow" style="color: var(--blue);">›</span>
+        </div>
+      
+        <div class="mml-item nt" id="mml-sharktank" onclick="selMod('sharktank'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">PITCH</span>
+            <span class="mml-nm">SHARK TANK</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">B-2</span>
+            <span class="mml-prize" style="color: var(--blue);">₹10K</span>
+          </div>
+          <span class="mml-arrow" style="color: var(--blue);">›</span>
+        </div>
+      
+        <div class="mml-item nt" id="mml-iqwars" onclick="selMod('iqwars'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">GREY MATTER</span>
+            <span class="mml-nm">IQ WARS 2.0</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">B-3</span>
+            <span class="mml-prize" style="color: var(--blue);">₹10K</span>
+          </div>
+          <span class="mml-arrow" style="color: var(--blue);">›</span>
+        </div>
+      
+        <div class="mml-item nt" id="mml-waterrocket" onclick="selMod('waterrocket'); mmlSel(this)">
+          <div class="mml-left">
+            <span class="mml-op">APOGEE</span>
+            <span class="mml-nm">WATER ROCKET</span>
+          </div>
+          <div class="mml-right">
+            <span class="mml-id">B-4</span>
+            <span class="mml-prize" style="color: var(--blue);">₹10K</span>
+          </div>
+          <span class="mml-arrow" style="color: var(--blue);">›</span>
+        </div>
+      </div>
+
       <!-- SCHEMATIC -->
       <div class="sch-panel">
         <span class="sch-lbl">NEXOVATE ORBITAL STATION · REF: NXV-2026-ALPHA · ALL MODULES CLICKABLE</span>
@@ -224,7 +354,7 @@
 │  SELECT MODULE  │
 │  ON SCHEMATIC   │
 └─────────────────┘</pre>
-          <div>CLICK ANY MODULE TO<br>ACCESS MISSION FILE<span style="animation:blink 1s step-end infinite;display:inline-block">_</span></div>
+          <div>TAP A MODULE ABOVE TO<br>ACCESS MISSION FILE<span style="animation:blink 1s step-end infinite;display:inline-block">_</span></div>
         </div>
       </div>
     </div>
