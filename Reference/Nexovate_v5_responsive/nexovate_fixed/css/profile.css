@@ -1,0 +1,273 @@
+/* profile.css additions for mobile polish */
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+}
+
+#profile-root {
+  width: 100%;
+  max-width: 900px;
+}
+
+.prof-card {
+  position: relative;
+  border: 1px solid rgba(240,165,0,.15);
+  background: rgba(240,165,0,.02);
+  padding: 40px;
+  margin-bottom: 40px;
+  animation: page-in 0.6s ease-out forwards;
+}
+
+.prof-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.prof-timer-lbl {
+  font-size: 9px;
+  letter-spacing: .4em;
+  color: var(--amber-dk);
+  margin-bottom: 12px;
+}
+
+.prof-timer-dig {
+  font-family: var(--font-d);
+  font-size: 52px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: .08em;
+  line-height: 1;
+}
+
+.prof-venue-box {
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: var(--amber-dk);
+}
+
+.prof-id-grid {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.prof-team-name {
+  font-family: var(--font-d);
+  font-size: 80px;
+  font-weight: 900;
+  color: var(--offwhite);
+  line-height: 0.9;
+  text-transform: uppercase;
+  word-break: break-all;
+}
+
+.prof-crew-no-box {
+  border: 1px solid var(--amber-dk);
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pcn-val {
+  font-family: var(--font-d);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+.prof-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.prof-info-item {
+  border-top: 1px solid rgba(240,165,0,.1);
+  padding-top: 12px;
+}
+
+.prof-info-val {
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--offwhite);
+  margin-top: 4px;
+}
+
+.prof-info-val.big {
+  font-family: var(--font-d);
+  font-size: 22px;
+  letter-spacing: .15em;
+  color: var(--amber);
+}
+
+.prof-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prof-event-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid rgba(240,165,0,.1);
+  background: rgba(240,165,0,.03);
+}
+
+.prof-event-op {
+  font-family: var(--font-d);
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: var(--amber);
+}
+
+.prof-event-name {
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--amber-dk);
+}
+
+.prof-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 48px;
+  border-top: 1px solid rgba(240,165,0,.1);
+  padding-top: 32px;
+}
+
+.prof-qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+#prof-qr {
+  padding: 8px;
+  background: var(--amber);
+  width: 100px;
+  height: 100px;
+}
+
+#prof-qr img {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.prof-qr-lbl {
+  font-size: 8px;
+  letter-spacing: .2em;
+  color: var(--amber-dk);
+  text-align: right;
+}
+
+.prof-notice {
+  margin-top: 32px;
+  font-size: 9px;
+  line-height: 1.8;
+  letter-spacing: .1em;
+  color: var(--amber-dk);
+  opacity: 0.7;
+}
+
+.prof-home-btn, .prof-logout-btn {
+  position: absolute;
+  top: 20px;
+  padding: 8px 16px;
+  font-size: 10px;
+  letter-spacing: .2em;
+}
+
+.prof-home-btn { left: 20px; }
+.prof-logout-btn { right: 20px; }
+
+/* Responsive Overhaul */
+@media (max-width: 600px) {
+  .profile-page { padding: 80px 12px 60px; }
+  
+  .prof-card { padding: 80px 16px 32px; }
+  
+  .prof-home-btn, .prof-logout-btn {
+    top: 12px;
+    padding: 6px 12px;
+    font-size: 8px;
+  }
+
+  .prof-timer-dig {
+    font-size: 28px;
+    letter-spacing: .04em;
+  }
+  
+  .prof-id-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  
+  .prof-team-name {
+    font-size: 32px;
+    line-height: 1.1;
+  }
+  
+  .prof-crew-no-box {
+    width: 120px;
+    margin: 0 auto;
+  }
+  
+  .prof-info-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  
+  .prof-info-val.big {
+    font-size: 18px;
+  }
+  
+  .prof-bottom-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+  }
+  
+  .prof-qr-wrap {
+    align-items: center;
+  }
+  
+  .prof-qr-lbl {
+    text-align: center;
+  }
+
+  .prof-event-item {
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .prof-event-name {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 360px) {
+  .prof-timer-dig {
+    font-size: 24px;
+  }
+  .prof-team-name {
+    font-size: 28px;
+  }
+}

@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXOVATE 2026 · MISSION CONTROL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════ */
+        :root {
+            --bg: #0D0A07;
+            --bg2: #110D09;
+            --amber: #F0A500;
+            --amber-dk: #C8882A;
+            --amber-dim: rgba(240, 165, 0, 0.12);
+            --offwhite: #E8E0D0;
+            --red: #C0392B;
+            --blue: #4A6E8A;
+            --font-d: 'Orbitron', monospace;
+            --font-m: 'IBM Plex Mono', monospace;
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--amber);
+            font-family: var(--font-m);
+            overflow-x: hidden;
+            cursor: crosshair;
+            min-height: 100vh;
+        }
+
+        button {
+            cursor: crosshair;
+        }
+
+        /* ═══════════════════════════════════════════
+   TEXTURE LAYERS
+═══════════════════════════════════════════ */
+        #scanlines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+                    rgba(0, 0, 0, 0.10) 2px, rgba(0, 0, 0, 0.10) 4px);
+        }
+
+        #grain-svg {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0.055;
+        }
+
+        #static-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+        }
+
+        #static-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* ═══════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════ */
+        #ticker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 26px;
+            background: rgba(13, 10, 7, 0.97);
+            border-bottom: 1px solid rgba(200, 136, 42, 0.4);
+            overflow: hidden;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+        }
+
+        #ticker-inner {
+            white-space: nowrap;
+            animation: tick 50s linear infinite;
+            font-size: 10px;
+            letter-spacing: 0.18em;
+            color: var(--amber-dk);
+        }
+
+        #ticker-inner em {
+            color: var(--amber);
+            font-style: normal;
+        }
+
+        @keyframes tick {
+            from {
+                transform: translateX(100vw);
+            }
+
+            to {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+   T-MINUS WIDGET
+═══════════════════════════════════════════ */
+        #tminus {
+            position: fixed;
+            top: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(13, 10, 7, 0.97);
+            border-bottom: 1px solid rgba(200, 136, 42, 0.35);
+            border-left: 1px solid rgba(200, 136, 42, 0.15);
+            border-right: 1px solid rgba(200, 136, 42, 0.15);
+            padding: 5px 28px 7px;
+            text-align: center;
+            z-index: 200;
+        }
+
+        #tminus-lbl {
+            font-size: 8px;
+            letter-spacing: .35em;
+            color: var(--amber-dk);
+            display: block;
+        }
+
+        #tminus-dig {
+            font-family: var(--font-d);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--amber);
+            letter-spacing: .12em;
+            text-shadow: 0 0 18px rgba(240, 165, 0, .45);
+        }
+
+        /* ═══════════════════════════════════════════
+   NAV DOTS
+═══════════════════════════════════════════ */
+        #nav-dots {
+            position: fixed;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            z-index: 200;
+        }
+
+        .nd {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--amber-dk);
+            cursor: crosshair;
+            transition: all .3s;
+            position: relative;
+        }
+
+        .nd.on {
+            background: var(--amber);
+            box-shadow: 0 0 12px rgba(240, 165, 0, .6);
+        }
+
+        .nd::after {
+            content: attr(data-lbl);
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 8px;
+            letter-spacing: .2em;
+            color: var(--amber-dk);
+            white-space: nowrap;
+            opacity: 0;
+            transition: .2s;
+        }
+
+        .nd:hover::after {
+            opacity: 1;
+        }
+
+        /* ═══════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════ */
+        .section {
+            min-height: 100vh;
+            padding: 90px 56px 60px;
+            position: relative;
+            display: none;
+        }
+
+        .section.on {
+            display: flex;
+        }
+
+        .section-lbl {
+            font-size: 9px;
+            letter-spacing: .45em;
+            color: var(--amber-dk);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .section-ttl {
+            font-family: var(--font-d);
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: .18em;
+            color: var(--offwhite);
+        }
+
+        /* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+        #hero {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0;
+        }
+
+        #patch-wrap {
+            margin-bottom: 32px;
+            filter: drop-shadow(0 0 36px rgba(240, 165, 0, .28));
+            animation: float 4.5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-9px)
+            }
+        }
+
+        .classify {
+            display: inline-block;
+            font-size: 8px;
+            letter-spacing: .4em;
+            border: 1px solid rgba(200, 136, 42, .5);
+            color: var(--amber-dk);
+            padding: 3px 14px;
+            margin-bottom: 20px;
+        }
+
+        .hero-sub {
+            font-size: 11px;
+            letter-spacing: .18em;
+            color: var(--amber-dk);
+            margin-bottom: 40px;
+            line-height: 2.2;
+        }
+
+        .hero-sub span {
+            color: var(--offwhite);
+        }
+
+        .btn-primary {
+            font-family: var(--font-d);
+            font-size: 12px;
+            letter-spacing: .28em;
+            color: var(--bg);
+            background: var(--amber);
+            border: none;
+            padding: 15px 44px;
+            clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+            transition: all .2s;
+            animation: pulse-btn 2.2s ease-in-out infinite;
+        }
+
+        .btn-primary:hover {
+            background: var(--offwhite);
+            box-shadow: 0 0 36px rgba(240, 165, 0, .6);
+            animation: none;
+        }
+
+        @keyframes pulse-btn {
+
+            0%,
+            100% {
+                box-shadow: 0 0 18px rgba(240, 165, 0, .25)
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(240, 165, 0, .55)
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+   DOSSIER
+═══════════════════════════════════════════ */
+        #dossier {
+            flex-direction: column;
+        }
+
+        .dossier-hdr {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+
+        .dossier-hdr p {
+            font-size: 10px;
+            letter-spacing: .2em;
+            color: var(--amber-dk);
+            margin-top: 10px;
+        }
+
+        .dossier-grid {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            border: 1px solid rgba(240, 165, 0, .18);
+            flex: 1;
+            min-height: 480px;
+        }
+
+        /* Schematic panel */
+        .sch-panel {
+            border-right: 1px solid rgba(240, 165, 0, .18);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sch-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(74, 110, 138, .06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(74, 110, 138, .06) 1px, transparent 1px);
+            background-size: 38px 38px;
+        }
+
+        .sch-lbl {
+            font-size: 8px;
+            letter-spacing: .35em;
+            color: var(--amber-dk);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        /* SVG module interactions */
+        .mod-g {
+            cursor: crosshair;
+        }
+
+        .mod-rect {
+            fill: rgba(240, 165, 0, .04);
+            stroke: var(--amber-dk);
+            stroke-width: .9;
+            transition: all .2s;
+        }
+
+        .mod-g:hover .mod-rect,
+        .mod-g.sel .mod-rect {
+            fill: rgba(240, 165, 0, .14);
+            stroke: var(--amber);
+            stroke-width: 1.4;
+        }
+
+        .mod-op {
+            font-family: var(--font-d);
+            font-size: 7.5px;
+            fill: var(--amber);
+            text-anchor: middle;
+            letter-spacing: .12em;
+        }
+
+        .mod-nm {
+            font-family: var(--font-m);
+            font-size: 6.5px;
+            fill: var(--amber-dk);
+            text-anchor: middle;
+            letter-spacing: .06em;
+        }
+
+        .mod-g:hover .mod-nm,
+        .mod-g.sel .mod-nm {
+            fill: var(--offwhite);
+        }
+
+        .nt-rect {
+            fill: rgba(74, 110, 138, .06);
+            stroke: #4A6E8A;
+            stroke-width: .9;
+            transition: all .2s;
+        }
+
+        .mod-g:hover .nt-rect,
+        .mod-g.sel .nt-rect {
+            fill: rgba(74, 110, 138, .18);
+            stroke-width: 1.4;
+        }
+
+        .nt-op {
+            font-family: var(--font-d);
+            font-size: 7px;
+            fill: #4A6E8A;
+            text-anchor: middle;
+            letter-spacing: .1em;
+        }
+
+        .nt-nm {
+            font-family: var(--font-m);
+            font-size: 6px;
+            fill: #4A6E8A;
+            text-anchor: middle;
+        }
+
+        .mod-g:hover .nt-nm {
+            fill: var(--offwhite);
+        }
+
+        .reactor-ring {
+            fill: none;
+            stroke: var(--amber);
+            stroke-width: .6;
+            opacity: .3;
+            animation: rpulse 2.2s ease-in-out infinite;
+        }
+
+        .reactor-ring:nth-child(2) {
+            animation-delay: .6s;
+        }
+
+        @keyframes rpulse {
+
+            0%,
+            100% {
+                opacity: .15
+            }
+
+            50% {
+                opacity: .55
+            }
+        }
+
+        .reactor-rect {
+            fill: rgba(240, 165, 0, .09);
+            stroke: var(--amber);
+            stroke-width: 1.5;
+            filter: drop-shadow(0 0 7px rgba(240, 165, 0, .4));
+            transition: all .3s;
+        }
+
+        .reactor-g:hover .reactor-rect,
+        .reactor-g.sel .reactor-rect {
+            fill: rgba(240, 165, 0, .22);
+            filter: drop-shadow(0 0 18px rgba(240, 165, 0, .7));
+        }
+
+        .reactor-g {
+            cursor: crosshair;
+        }
+
+        /* File panel */
+        .file-panel {
+            background: rgba(240, 165, 0, .025);
+            padding: 22px;
+            overflow-y: auto;
+            font-size: 11px;
+            line-height: 1.85;
+        }
+
+        .fp-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 10px;
+            letter-spacing: .14em;
+            color: var(--amber-dk);
+            text-align: center;
+            gap: 20px;
+        }
+
+        .fp-placeholder pre {
+            opacity: .35;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .fp-op {
+            font-family: var(--font-d);
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: .18em;
+            color: var(--amber);
+            text-shadow: 0 0 18px rgba(240, 165, 0, .4);
+            margin: 10px 0 4px;
+        }
+
+        .fp-tagline {
+            font-style: italic;
+            color: var(--amber-dk);
+            font-size: 10.5px;
+            margin-bottom: 10px;
+        }
+
+        .fp-obj {
+            color: var(--offwhite);
+            font-size: 10.5px;
+            line-height: 1.85;
+            margin: 8px 0 14px;
+        }
+
+        .fp-div {
+            color: var(--amber-dk);
+            letter-spacing: .04em;
+        }
+
+        .fp-lbl {
+            color: var(--amber-dk);
+            font-size: 10px;
+            letter-spacing: .18em;
+        }
+
+        .fp-val {
+            color: var(--offwhite);
+        }
+
+        .fp-prize {
+            color: var(--amber);
+            font-family: var(--font-d);
+            font-size: 16px;
+        }
+
+        .fp-type {
+            font-size: 8px;
+            letter-spacing: .22em;
+            color: var(--blue);
+        }
+
+        .fp-status {
+            font-size: 8px;
+            letter-spacing: .3em;
+            color: var(--amber-dk);
+            margin: 8px 0;
+        }
+
+        .btn-file {
+            font-family: var(--font-d);
+            font-size: 10px;
+            letter-spacing: .24em;
+            color: var(--bg);
+            background: var(--amber);
+            border: none;
+            padding: 11px 16px;
+            width: 100%;
+            margin-top: 14px;
+            clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+            transition: all .2s;
+        }
+
+        .btn-file:hover {
+            background: var(--offwhite);
+            box-shadow: 0 0 18px rgba(240, 165, 0, .4);
+        }
+
+        .dossier-footer {
+            text-align: center;
+            margin-top: 28px;
+        }
+
+        /* ═══════════════════════════════════════════
+   HACKSPRINT
+═══════════════════════════════════════════ */
+        #hacksprint {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0F0700;
+        }
+
+        #hacksprint::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, rgba(240, 100, 0, .07) 0%, transparent 65%);
+        }
+
+        .tx-block {
+            text-align: center;
+            margin-bottom: 52px;
+        }
+
+        .tx-line {
+            font-size: 12px;
+            letter-spacing: .28em;
+            color: var(--amber-dk);
+            display: block;
+            margin-bottom: 7px;
+            opacity: 0;
+            animation: txin .45s forwards;
+        }
+
+        .tx-line:nth-child(1) {
+            animation-delay: .15s
+        }
+
+        .tx-line:nth-child(2) {
+            animation-delay: .55s
+        }
+
+        .tx-line:nth-child(3) {
+            animation-delay: .95s;
+            color: var(--offwhite)
+        }
+
+        .tx-line:nth-child(4) {
+            animation-delay: 1.35s
+        }
+
+        .tx-line:nth-child(5) {
+            animation-delay: 1.75s;
+            color: var(--amber);
+            font-family: var(--font-d);
+            font-size: 14px;
+            letter-spacing: .38em
+        }
+
+        .tx-line:nth-child(6) {
+            animation-delay: 2.15s;
+            color: var(--offwhite)
+        }
+
+        .tx-line:nth-child(7) {
+            animation-delay: 2.55s;
+            color: var(--red);
+            font-family: var(--font-d);
+            font-size: 22px;
+            letter-spacing: .3em
+        }
+
+        @keyframes txin {
+            from {
+                opacity: 0;
+                transform: translateX(-12px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .hack-brief {
+            max-width: 660px;
+            width: 100%;
+            border: 1px solid rgba(240, 165, 0, .28);
+            padding: 28px;
+            background: rgba(240, 165, 0, .025);
+            font-size: 11px;
+            line-height: 1.9;
+            opacity: 0;
+            animation: fadein .5s 3s forwards;
+        }
+
+        @keyframes fadein {
+            to {
+                opacity: 1
+            }
+        }
+
+        .hack-phase-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            color: var(--offwhite);
+        }
+
+        .hack-phase-row span:last-child {
+            color: var(--amber-dk);
+        }
+
+        .hack-domain {
+            color: var(--offwhite);
+            padding: 3px 0 3px 16px;
+            position: relative;
+        }
+
+        .hack-domain::before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: var(--amber);
+        }
+
+        .btn-omega {
+            font-family: var(--font-d);
+            font-size: 12px;
+            letter-spacing: .28em;
+            color: var(--bg);
+            background: var(--amber);
+            border: 2px solid var(--amber);
+            padding: 16px 48px;
+            width: 100%;
+            margin-top: 22px;
+            clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+            transition: all .2s;
+            opacity: 0;
+            animation: fadein .5s 3.6s forwards;
+        }
+
+        .btn-omega:hover {
+            background: var(--red);
+            border-color: var(--red);
+            box-shadow: 0 0 38px rgba(192, 57, 43, .5);
+        }
+
+        /* ═══════════════════════════════════════════
+   REGISTRATION
+═══════════════════════════════════════════ */
+        #registration {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reg-wrap {
+            max-width: 660px;
+            width: 100%;
+        }
+
+        .reg-step {
+            display: none;
+            animation: fadein .4s forwards;
+        }
+
+        .reg-step.on {
+            display: block;
+        }
+
+        .step-ind {
+            font-size: 9px;
+            letter-spacing: .4em;
+            color: var(--amber-dk);
+            margin-bottom: 28px;
+        }
+
+        .reg-prompt {
+            font-size: 11px;
+            letter-spacing: .14em;
+            color: var(--amber-dk);
+            line-height: 1.85;
+            margin-bottom: 20px;
+        }
+
+        .reg-input {
+            font-family: var(--font-m);
+            font-size: 17px;
+            color: var(--amber);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--amber-dk);
+            padding: 8px 0;
+            width: 100%;
+            outline: none;
+            letter-spacing: .1em;
+            caret-color: var(--amber);
+        }
+
+        .reg-input::placeholder {
+            color: rgba(240, 165, 0, .22);
+            font-size: 14px;
+        }
+
+        .reg-input:focus {
+            border-bottom-color: var(--amber);
+        }
+
+        .reg-opts {
+            margin-top: 16px;
+        }
+
+        .reg-opt {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(240, 165, 0, .1);
+            transition: all .2s;
+        }
+
+        .reg-opt:hover {
+            padding-left: 8px;
+        }
+
+        .opt-dot {
+            width: 9px;
+            height: 9px;
+            border: 1px solid var(--amber-dk);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all .2s;
+        }
+
+        .reg-opt.sel .opt-dot {
+            background: var(--amber);
+            border-color: var(--amber);
+            box-shadow: 0 0 10px rgba(240, 165, 0, .5);
+        }
+
+        .opt-name {
+            font-family: var(--font-d);
+            font-size: 11px;
+            letter-spacing: .15em;
+            color: var(--amber);
+        }
+
+        .opt-evt {
+            font-size: 10px;
+            color: var(--amber-dk);
+            margin-left: auto;
+        }
+
+        .btn-next {
+            font-family: var(--font-d);
+            font-size: 11px;
+            letter-spacing: .28em;
+            color: var(--bg);
+            background: var(--amber);
+            border: none;
+            padding: 13px 30px;
+            margin-top: 28px;
+            clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+            transition: all .2s;
+        }
+
+        .btn-next:hover {
+            background: var(--offwhite);
+        }
+
+        .btn-next.full {
+            width: 100%;
+            padding: 17px;
+            font-size: 12px;
+        }
+
+        .btn-next.danger {
+            background: var(--red);
+        }
+
+        .btn-next.danger:hover {
+            background: #e74c3c;
+        }
+
+        /* GO/NO-GO */
+        .gng-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(240, 165, 0, .1);
+            opacity: .28;
+            transition: all .45s;
+        }
+
+        .gng-item.go {
+            opacity: 1;
+        }
+
+        .gng-lbl {
+            font-size: 10.5px;
+            letter-spacing: .2em;
+            color: var(--amber-dk);
+        }
+
+        .gng-status {
+            font-family: var(--font-d);
+            font-size: 13px;
+            letter-spacing: .2em;
+            color: var(--amber);
+            opacity: 0;
+            transition: all .45s;
+            text-shadow: 0 0 14px rgba(240, 165, 0, .6);
+        }
+
+        .gng-item.go .gng-status {
+            opacity: 1;
+        }
+
+        #gng-final {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 10.5px;
+            letter-spacing: .3em;
+            color: var(--offwhite);
+            opacity: 0;
+            transition: .5s;
+        }
+
+        /* ═══════════════════════════════════════════
+   CONFIRMATION
+═══════════════════════════════════════════ */
+        #confirmation {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 0;
+        }
+
+        #conf-patch {
+            margin-bottom: 28px;
+            filter: drop-shadow(0 0 55px rgba(240, 165, 0, .45));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .conf-accepted {
+            font-family: var(--font-d);
+            font-size: 12px;
+            letter-spacing: .4em;
+            color: var(--amber);
+            margin-bottom: 8px;
+            text-shadow: 0 0 18px rgba(240, 165, 0, .5);
+        }
+
+        .conf-crew {
+            font-size: 11px;
+            letter-spacing: .18em;
+            color: var(--offwhite);
+            line-height: 2.1;
+            margin-bottom: 8px;
+        }
+
+        .conf-report {
+            font-size: 9px;
+            letter-spacing: .22em;
+            color: var(--amber-dk);
+            margin-top: 14px;
+        }
+
+        /* ═══════════════════════════════════════════
+   DIVIDER
+═══════════════════════════════════════════ */
+        .div-line {
+            color: var(--amber-dk);
+            letter-spacing: .04em;
+            font-size: 11px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TEXTURES -->
+    <div id="scanlines"></div>
+    <svg id="grain-svg">
+        <filter id="gf">
+            <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="4" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#gf)" />
+    </svg>
+
+    <!-- STATIC OVERLAY -->
+    <div id="static-overlay"><canvas id="static-canvas"></canvas></div>
+
+    <!-- TICKER -->
+    <div id="ticker">
+        <div id="ticker-inner">
+            NEXOVATE 2026 &nbsp;·&nbsp; MISSION STATUS: <em>GO</em> &nbsp;·&nbsp; PESCE MANDYA LAUNCH SITE &nbsp;·&nbsp;
+            MAY 15–16, 2026 &nbsp;·&nbsp; ALL SYSTEMS NOMINAL &nbsp;·&nbsp; PRIZE MANIFEST: <em>₹2,00,000</em>
+            &nbsp;·&nbsp; CREW APPLICATIONS OPEN &nbsp;·&nbsp; T-MINUS INITIATED &nbsp;·&nbsp; OPERATION IGNITION:
+            <em>OMEGA LEVEL ACTIVE</em> &nbsp;·&nbsp; 10 ACTIVE OPERATIONS &nbsp;·&nbsp; NEXOVATE 2026 &nbsp;·&nbsp;
+            MISSION STATUS: <em>GO</em> &nbsp;·&nbsp; PESCE MANDYA LAUNCH SITE &nbsp;·&nbsp; MAY 15–16, 2026
+            &nbsp;·&nbsp; PRIZE MANIFEST: <em>₹2,00,000</em> &nbsp;·&nbsp;
+        </div>
+    </div>
+
+    <!-- T-MINUS -->
+    <div id="tminus">
+        <span id="tminus-lbl">LAUNCH WINDOW OPENS IN</span>
+        <div id="tminus-dig">-- : -- : --</div>
+    </div>
+
+    <!-- NAV DOTS -->
+    <div id="nav-dots">
+        <div class="nd on" data-lbl="HERO" data-sec="hero"></div>
+        <div class="nd" data-lbl="DOSSIER" data-sec="dossier"></div>
+        <div class="nd" data-lbl="IGNITION" data-sec="hacksprint"></div>
+        <div class="nd" data-lbl="REGISTER" data-sec="registration"></div>
+    </div>
+
+    <!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+    <section class="section on" id="hero">
+
+        <!-- Mission Patch -->
+        <div id="patch-wrap">
+            <svg width="270" height="270" viewBox="0 0 270 270" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <path id="pa-top" d="M 38,135 A 97,97 0 0,1 232,135" />
+                    <path id="pa-bot" d="M 50,150 A 97,97 0 0,0 220,150" />
+                </defs>
+                <!-- Outer serrated border -->
+                <circle cx="135" cy="135" r="130" fill="none" stroke="#C8882A" stroke-width=".8"
+                    stroke-dasharray="7,4" />
+                <!-- Patch fill -->
+                <circle cx="135" cy="135" r="122" fill="#0C0905" />
+                <circle cx="135" cy="135" r="122" fill="none" stroke="#F0A500" stroke-width="2" />
+                <circle cx="135" cy="135" r="112" fill="none" stroke="#C8882A" stroke-width=".5" />
+                <!-- Stars -->
+                <g fill="#F0A500" opacity=".65">
+                    <circle cx="52" cy="92" r="1.5" />
+                    <circle cx="72" cy="55" r="1" />
+                    <circle cx="104" cy="43" r="1.5" />
+                    <circle cx="218" cy="92" r="1.5" />
+                    <circle cx="198" cy="55" r="1" />
+                    <circle cx="166" cy="43" r="1.5" />
+                    <circle cx="47" cy="158" r="1" />
+                    <circle cx="223" cy="158" r="1" />
+                    <circle cx="60" cy="196" r="1.5" />
+                    <circle cx="210" cy="196" r="1.5" />
+                </g>
+                <!-- Main truss -->
+                <line x1="62" y1="135" x2="208" y2="135" stroke="#F0A500" stroke-width="3" />
+                <line x1="62" y1="131" x2="208" y2="131" stroke="rgba(240,165,0,.2)" stroke-width=".5" />
+                <line x1="62" y1="139" x2="208" y2="139" stroke="rgba(240,165,0,.2)" stroke-width=".5" />
+                <!-- Reactor core -->
+                <rect x="118" y="118" width="34" height="34" fill="rgba(240,165,0,.13)" stroke="#F0A500"
+                    stroke-width="1.5" rx="2" />
+                <text x="135" y="138" text-anchor="middle" fill="#F0A500" font-size="7" font-family="monospace"
+                    letter-spacing="1">CORE</text>
+                <!-- Tech modules top -->
+                <rect x="72" y="108" width="22" height="15" fill="rgba(240,165,0,.06)" stroke="#C8882A"
+                    stroke-width=".8" />
+                <rect x="176" y="108" width="22" height="15" fill="rgba(240,165,0,.06)" stroke="#C8882A"
+                    stroke-width=".8" />
+                <rect x="100" y="95" width="18" height="13" fill="rgba(240,165,0,.06)" stroke="#C8882A"
+                    stroke-width=".8" />
+                <rect x="152" y="95" width="18" height="13" fill="rgba(240,165,0,.06)" stroke="#C8882A"
+                    stroke-width=".8" />
+                <!-- Connectors -->
+                <line x1="83" y1="123" x2="83" y2="135" stroke="#C8882A" stroke-width=".8" />
+                <line x1="187" y1="123" x2="187" y2="135" stroke="#C8882A" stroke-width=".8" />
+                <line x1="109" y1="108" x2="109" y2="135" stroke="#C8882A" stroke-width=".8" stroke-dasharray="2,2" />
+                <line x1="161" y1="108" x2="161" y2="135" stroke="#C8882A" stroke-width=".8" stroke-dasharray="2,2" />
+                <!-- Bottom modules -->
+                <rect x="72" y="150" width="22" height="15" fill="rgba(74,110,138,.14)" stroke="#4A6E8A"
+                    stroke-width=".8" />
+                <rect x="176" y="150" width="22" height="15" fill="rgba(74,110,138,.14)" stroke="#4A6E8A"
+                    stroke-width=".8" />
+                <line x1="83" y1="135" x2="83" y2="150" stroke="#4A6E8A" stroke-width=".8" />
+                <line x1="187" y1="135" x2="187" y2="150" stroke="#4A6E8A" stroke-width=".8" />
+                <!-- Solar panels -->
+                <rect x="20" y="128" width="38" height="14" fill="rgba(74,110,138,.28)" stroke="#4A6E8A"
+                    stroke-width=".8" />
+                <line x1="28" y1="129" x2="28" y2="141" stroke="#4A6E8A" stroke-width=".5" />
+                <line x1="36" y1="129" x2="36" y2="141" stroke="#4A6E8A" stroke-width=".5" />
+                <line x1="44" y1="129" x2="44" y2="141" stroke="#4A6E8A" stroke-width=".5" />
+                <line x1="58" y1="135" x2="62" y2="135" stroke="#F0A500" stroke-width="2.5" />
+                <rect x="212" y="128" width="38" height="14" fill="rgba(74,110,138,.28)" stroke="#4A6E8A"
+                    stroke-width=".8" />
+                <line x1="220" y1="129" x2="220" y2="141" stroke="#4A6E8A" stroke-width=".5" />
+                <line x1="228" y1="129" x2="228" y2="141" stroke="#4A6E8A" stroke-width=".5" />
+                <line x1="236" y1="129" x2="236" y2="141" stroke="#4A6E8A" stroke-width=".5" />
+                <line x1="208" y1="135" x2="212" y2="135" stroke="#F0A500" stroke-width="2.5" />
+                <!-- Ref labels -->
+                <text x="73" y="106" fill="#C8882A" font-size="4.5" font-family="monospace">A-1</text>
+                <text x="177" y="106" fill="#C8882A" font-size="4.5" font-family="monospace">A-5</text>
+                <!-- Arched text -->
+                <text fill="#F0A500" font-family="'Orbitron', monospace" font-size="11.5" font-weight="700"
+                    letter-spacing="4">
+                    <textPath href="#pa-top" startOffset="50%" text-anchor="middle">NEXOVATE 2026</textPath>
+                </text>
+                <text fill="#C8882A" font-family="'Orbitron', monospace" font-size="9" letter-spacing="3">
+                    <textPath href="#pa-bot" startOffset="50%" text-anchor="middle">PESCE MANDYA</textPath>
+                </text>
+            </svg>
+        </div>
+
+        <div class="classify">MISSION BRIEFING &nbsp;·&nbsp; UNCLASSIFIED</div>
+
+        <p class="hero-sub">
+            <span>MAY 15–16, 2026</span> &nbsp;·&nbsp; PESCE MANDYA LAUNCH SITE<br>
+            PRIZE MANIFEST: <span>₹2,00,000</span> &nbsp;·&nbsp; <span>10</span> ACTIVE OPERATIONS
+        </p>
+
+        <button class="btn-primary" onclick="go('dossier')">INITIATE MISSION BRIEFING</button>
+    </section>
+
+    <!-- ══════════════════════════════════
+     DOSSIER
+══════════════════════════════════ -->
+    <section class="section" id="dossier" style="flex-direction:column;">
+        <div class="dossier-hdr">
+            <span class="section-lbl">NEXOVATE 2026 · OPERATION OVERVIEW</span>
+            <div class="section-ttl">MISSION DOSSIER</div>
+            <p>SELECT A MODULE ON THE SCHEMATIC TO ACCESS MISSION FILE</p>
+        </div>
+
+        <div class="dossier-grid">
+
+            <!-- SCHEMATIC -->
+            <div class="sch-panel">
+                <span class="sch-lbl">NEXOVATE ORBITAL STATION · REF: NXV-2026-ALPHA · ALL MODULES CLICKABLE</span>
+
+                <svg id="sch-svg" viewBox="0 0 720 410" xmlns="http://www.w3.org/2000/svg"
+                    style="width:100%;height:auto;">
+
+                    <!-- Blueprint grid -->
+                    <defs>
+                        <pattern id="bgrid" width="38" height="38" patternUnits="userSpaceOnUse">
+                            <path d="M38 0L0 0 0 38" fill="none" stroke="rgba(74,110,138,.07)" stroke-width=".5" />
+                        </pattern>
+                    </defs>
+                    <rect width="720" height="410" fill="url(#bgrid)" />
+
+                    <!-- MAIN TRUSS -->
+                    <line x1="58" y1="200" x2="662" y2="200" stroke="#C8882A" stroke-width="2.2" />
+                    <line x1="58" y1="196" x2="662" y2="196" stroke="rgba(240,165,0,.18)" stroke-width=".5" />
+                    <line x1="58" y1="204" x2="662" y2="204" stroke="rgba(240,165,0,.18)" stroke-width=".5" />
+                    <!-- Truss cross-hatch details -->
+                    <g stroke="rgba(240,165,0,.12)" stroke-width=".5">
+                        <line x1="80" y1="196" x2="88" y2="204" />
+                        <line x1="100" y1="196" x2="108" y2="204" />
+                        <line x1="120" y1="196" x2="128" y2="204" />
+                        <line x1="140" y1="196" x2="148" y2="204" />
+                        <line x1="160" y1="196" x2="168" y2="204" />
+                        <line x1="180" y1="196" x2="188" y2="204" />
+                        <line x1="550" y1="196" x2="558" y2="204" />
+                        <line x1="570" y1="196" x2="578" y2="204" />
+                        <line x1="590" y1="196" x2="598" y2="204" />
+                        <line x1="610" y1="196" x2="618" y2="204" />
+                        <line x1="630" y1="196" x2="638" y2="204" />
+                        <line x1="650" y1="196" x2="658" y2="204" />
+                    </g>
+
+                    <!-- SOLAR PANELS LEFT -->
+                    <rect x="10" y="188" width="44" height="24" fill="rgba(74,110,138,.28)" stroke="#4A6E8A"
+                        stroke-width=".8" />
+                    <line x1="18" y1="189" x2="18" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="26" y1="189" x2="26" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="34" y1="189" x2="34" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="42" y1="189" x2="42" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="54" y1="200" x2="58" y2="200" stroke="#C8882A" stroke-width="2" />
+                    <text x="32" y="225" text-anchor="middle" fill="#4A6E8A" font-size="6"
+                        font-family="monospace">PWR-L</text>
+
+                    <!-- SOLAR PANELS RIGHT -->
+                    <rect x="666" y="188" width="44" height="24" fill="rgba(74,110,138,.28)" stroke="#4A6E8A"
+                        stroke-width=".8" />
+                    <line x1="674" y1="189" x2="674" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="682" y1="189" x2="682" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="690" y1="189" x2="690" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="698" y1="189" x2="698" y2="211" stroke="#4A6E8A" stroke-width=".5" />
+                    <line x1="662" y1="200" x2="666" y2="200" stroke="#C8882A" stroke-width="2" />
+                    <text x="688" y="225" text-anchor="middle" fill="#4A6E8A" font-size="6"
+                        font-family="monospace">PWR-R</text>
+
+                    <!-- ═ TECHNICAL MODULES (TOP) ═ -->
+
+                    <!-- M1: ROBO RACE -->
+                    <g class="mod-g" id="m-rr" onclick="selMod('rr')">
+                        <line x1="88" y1="153" x2="88" y2="200" stroke="rgba(240,165,0,.3)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="mod-rect" x="60" y="118" width="56" height="35" rx="1" />
+                        <text class="mod-op" x="88" y="132">IRONCLAD</text>
+                        <text class="mod-nm" x="88" y="145">ROBO RACE</text>
+                        <text x="60" y="114" fill="#C8882A" font-size="5" font-family="monospace">A-1</text>
+                        <text x="60" y="162" fill="rgba(240,165,0,.2)" font-size="5" font-family="monospace">₹30K</text>
+                    </g>
+
+                    <!-- M2: ROBO SOCCER -->
+                    <g class="mod-g" id="m-rs" onclick="selMod('rs')">
+                        <line x1="196" y1="153" x2="196" y2="200" stroke="rgba(240,165,0,.3)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="mod-rect" x="163" y="118" width="66" height="35" rx="1" />
+                        <text class="mod-op" x="196" y="132">GRIDLOCK</text>
+                        <text class="mod-nm" x="196" y="145">ROBO SOCCER</text>
+                        <text x="163" y="114" fill="#C8882A" font-size="5" font-family="monospace">A-2</text>
+                        <text x="163" y="162" fill="rgba(240,165,0,.2)" font-size="5"
+                            font-family="monospace">₹30K</text>
+                    </g>
+
+                    <!-- M3: ROBO SUMO (center-top, slightly higher = priority) -->
+                    <g class="mod-g" id="m-rsu" onclick="selMod('rsu')">
+                        <line x1="360" y1="140" x2="360" y2="200" stroke="rgba(240,165,0,.3)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="mod-rect" x="322" y="100" width="76" height="40" rx="1" />
+                        <text class="mod-op" x="360" y="116">IMMOVABLE</text>
+                        <text class="mod-nm" x="360" y="130">ROBO SUMO</text>
+                        <text x="322" y="96" fill="#C8882A" font-size="5" font-family="monospace">A-3 · PRIORITY</text>
+                        <text x="322" y="150" fill="rgba(240,165,0,.2)" font-size="5"
+                            font-family="monospace">₹20K</text>
+                    </g>
+
+                    <!-- M4: LINE FOLLOWER -->
+                    <g class="mod-g" id="m-lf" onclick="selMod('lf')">
+                        <line x1="510" y1="153" x2="510" y2="200" stroke="rgba(240,165,0,.3)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="mod-rect" x="471" y="118" width="78" height="35" rx="1" />
+                        <text class="mod-op" x="510" y="132">THREADLINE</text>
+                        <text class="mod-nm" x="510" y="145">LINE FOLLOWER</text>
+                        <text x="471" y="114" fill="#C8882A" font-size="5" font-family="monospace">A-4</text>
+                        <text x="471" y="162" fill="rgba(240,165,0,.2)" font-size="5"
+                            font-family="monospace">₹20K</text>
+                    </g>
+
+                    <!-- M5: MAZE -->
+                    <g class="mod-g" id="m-mz" onclick="selMod('mz')">
+                        <line x1="620" y1="153" x2="620" y2="200" stroke="rgba(240,165,0,.3)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="mod-rect" x="592" y="118" width="56" height="35" rx="1" />
+                        <text class="mod-op" x="620" y="132">LABYRINTH</text>
+                        <text class="mod-nm" x="620" y="145">MAZE</text>
+                        <text x="592" y="114" fill="#C8882A" font-size="5" font-family="monospace">A-5</text>
+                        <text x="592" y="162" fill="rgba(240,165,0,.2)" font-size="5"
+                            font-family="monospace">₹20K</text>
+                    </g>
+
+                    <!-- ═ REACTOR CORE (HACKSPRINT) ═ -->
+                    <g class="reactor-g" id="m-hs" onclick="go('hacksprint')">
+                        <circle cx="360" cy="200" r="44" class="reactor-ring" />
+                        <circle cx="360" cy="200" r="32" class="reactor-ring" style="animation-delay:.6s" />
+                        <rect class="reactor-rect" x="322" y="183" width="76" height="34" rx="2" />
+                        <text x="360" y="197" text-anchor="middle" fill="#F0A500" font-family="'Orbitron',monospace"
+                            font-size="8" font-weight="700" letter-spacing="2">CORE</text>
+                        <text x="360" y="210" text-anchor="middle" fill="#C8882A" font-family="monospace" font-size="6"
+                            letter-spacing="1">HACKSPRINT</text>
+                        <text x="360" y="172" text-anchor="middle" fill="rgba(240,165,0,.4)" font-family="monospace"
+                            font-size="5.5" letter-spacing="1">[ OMEGA PROTOCOL ]</text>
+                    </g>
+
+                    <!-- ═ NON-TECH MODULES (BOTTOM) ═ -->
+                    <text x="360" y="388" text-anchor="middle" fill="rgba(74,110,138,.45)" font-size="7"
+                        font-family="monospace" letter-spacing="3">GROUND OPERATIONS RING</text>
+
+                    <!-- M6: BRAND RUMBLING -->
+                    <g class="mod-g" id="m-br" onclick="selMod('br')">
+                        <line x1="108" y1="200" x2="108" y2="258" stroke="rgba(74,110,138,.35)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="nt-rect" x="72" y="258" width="72" height="34" rx="1" />
+                        <text class="nt-op" x="108" y="272">SIGNAL</text>
+                        <text class="nt-nm" x="108" y="284">BRAND RUMBLE</text>
+                        <text x="72" y="302" fill="rgba(74,110,138,.4)" font-size="5" font-family="monospace">B-1 ·
+                            ₹10K</text>
+                    </g>
+
+                    <!-- M7: SHARK TANK -->
+                    <g class="mod-g" id="m-st" onclick="selMod('st')">
+                        <line x1="238" y1="200" x2="238" y2="258" stroke="rgba(74,110,138,.35)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="nt-rect" x="200" y="258" width="76" height="34" rx="1" />
+                        <text class="nt-op" x="238" y="272">PITCH</text>
+                        <text class="nt-nm" x="238" y="284">SHARK TANK</text>
+                        <text x="200" y="302" fill="rgba(74,110,138,.4)" font-size="5" font-family="monospace">B-2 ·
+                            ₹10K</text>
+                    </g>
+
+                    <!-- M8: IQ WARS -->
+                    <g class="mod-g" id="m-iq" onclick="selMod('iq')">
+                        <line x1="476" y1="200" x2="476" y2="258" stroke="rgba(74,110,138,.35)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="nt-rect" x="432" y="258" width="88" height="34" rx="1" />
+                        <text class="nt-op" x="476" y="272">GREY MATTER</text>
+                        <text class="nt-nm" x="476" y="284">IQ WARS 2.0</text>
+                        <text x="432" y="302" fill="rgba(74,110,138,.4)" font-size="5" font-family="monospace">B-3 ·
+                            ₹10K</text>
+                    </g>
+
+                    <!-- M9: WATER ROCKET -->
+                    <g class="mod-g" id="m-wr" onclick="selMod('wr')">
+                        <line x1="608" y1="200" x2="608" y2="258" stroke="rgba(74,110,138,.35)" stroke-width=".9"
+                            stroke-dasharray="3,3" />
+                        <rect class="nt-rect" x="566" y="258" width="84" height="34" rx="1" />
+                        <text class="nt-op" x="608" y="272">APOGEE</text>
+                        <text class="nt-nm" x="608" y="284">WATER ROCKET</text>
+                        <text x="566" y="302" fill="rgba(74,110,138,.4)" font-size="5" font-family="monospace">B-4 ·
+                            ₹10K</text>
+                    </g>
+
+                    <!-- Legend -->
+                    <g transform="translate(10,355)">
+                        <rect width="8" height="8" fill="rgba(240,165,0,.04)" stroke="#F0A500" stroke-width=".8" />
+                        <text x="13" y="8" fill="#C8882A" font-size="6" font-family="monospace">TECHNICAL OPS</text>
+                        <rect x="100" width="8" height="8" fill="rgba(74,110,138,.14)" stroke="#4A6E8A"
+                            stroke-width=".8" />
+                        <text x="113" y="8" fill="#4A6E8A" font-size="6" font-family="monospace">GROUND OPS</text>
+                    </g>
+
+                </svg>
+            </div>
+
+            <!-- FILE PANEL -->
+            <div class="file-panel" id="file-panel">
+                <div class="fp-placeholder">
+                    <pre>┌─────────────────┐
+│  SELECT MODULE  │
+│  ON SCHEMATIC   │
+└─────────────────┘</pre>
+                    <div>CLICK ANY MODULE TO<br>ACCESS MISSION FILE<span
+                            style="animation:blink 1s step-end infinite;display:inline-block">_</span></div>
+                </div>
+            </div>
+
+        </div><!-- /dossier-grid -->
+
+        <div class="dossier-footer" style="margin-top:28px;">
+            <button class="btn-primary" style="font-size:11px;padding:12px 32px;" onclick="go('hacksprint')">
+                PROCEED TO OPERATION IGNITION ›
+            </button>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+     HACKSPRINT
+══════════════════════════════════ -->
+    <section class="section" id="hacksprint" style="flex-direction:column;align-items:center;justify-content:center;">
+
+        <div class="tx-block" id="tx-block">
+            <span class="tx-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+            <span class="tx-line">MISSION CONTROL TO ALL STATIONS.</span>
+            <span class="tx-line">THIS IS A PRIORITY TRANSMISSION.</span>
+            <span class="tx-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+            <span class="tx-line">OPERATION: IGNITION IS NOW ACTIVE.</span>
+            <span class="tx-line">CLASSIFICATION: OMEGA LEVEL · 24 HOURS CONTINUOUS.</span>
+            <span class="tx-line">THIS IS NOT A DRILL.</span>
+        </div>
+
+        <div class="hack-brief" id="hack-brief">
+            <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            <div class="fp-op">HACKSPRINT 6.0</div>
+            <div style="font-size:9px;letter-spacing:.3em;color:var(--amber-dk);margin-bottom:14px;">OPERATION: IGNITION
+                · OMEGA CLEARANCE</div>
+            <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            <br>
+            <span class="fp-lbl">MISSION CLASS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-val">OMEGA ·
+                UNRESTRICTED</span><br>
+            <span class="fp-lbl">DURATION &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+                class="fp-val">24 HOURS CONTINUOUS OPERATION</span><br>
+            <span class="fp-lbl">CREW REQUIREMENT &nbsp;</span><span class="fp-val">3 – 4 PERSONNEL</span><br>
+            <span class="fp-lbl">MISSION VALUE &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-prize">₹60,000</span><br>
+            <br>
+            <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            <br>
+            <div style="font-size:9px;letter-spacing:.3em;color:var(--amber-dk);margin-bottom:8px;">ACTIVE MISSION
+                DOMAINS:</div>
+            <div class="hack-domain">DOMAIN A · ARTIFICIAL INTELLIGENCE</div>
+            <div class="hack-domain">DOMAIN B · AGRICULTURE &amp; HEALTHCARE TECHNOLOGY</div>
+            <div class="hack-domain">DOMAIN C · INTERNET OF THINGS</div>
+            <br>
+            <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            <br>
+            <div style="font-size:9px;letter-spacing:.3em;color:var(--amber-dk);margin-bottom:8px;">MISSION PHASES:
+            </div>
+            <div class="hack-phase-row"><span>PHASE 1 — PROBLEM ACQUISITION</span><span>[0–2 HRS]</span></div>
+            <div class="hack-phase-row"><span>PHASE 2 — SYSTEMS DEVELOPMENT</span><span>[2–20 HRS]</span></div>
+            <div class="hack-phase-row"><span>PHASE 3 — MISSION PRESENTATION</span><span>[20–24 HRS]</span></div>
+            <br>
+            <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            <br>
+            <span class="fp-lbl">MISSION LEADS &nbsp;</span><span class="fp-val">SONAL H · ASHWIN S</span><br>
+            <span class="fp-lbl">COMMS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+                class="fp-val">9591787616 · 8951728170</span>
+            <br>
+            <button class="btn-omega" onclick="regFor('OPERATION: IGNITION','HACKSPRINT 6.0')">
+                INITIATE CREW REGISTRATION · OPERATION IGNITION
+            </button>
+        </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+     REGISTRATION
+══════════════════════════════════ -->
+    <section class="section" id="registration" style="flex-direction:column;align-items:center;justify-content:center;">
+        <div class="reg-wrap">
+
+            <div style="text-align:center;margin-bottom:44px;">
+                <span class="section-lbl">CREW ASSIGNMENT PROTOCOL</span>
+                <div class="section-ttl">CREW MANIFEST</div>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="reg-step on" id="rs1">
+                <div class="step-ind">STEP 01 OF 04 &nbsp;·&nbsp; CREW DESIGNATION</div>
+                <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+                <br>
+                <div class="reg-prompt">MISSION CONTROL: PLEASE CONFIRM CREW DESIGNATION.<br>THIS IS THE IDENTIFIER BY
+                    WHICH YOUR TEAM WILL BE<br>LOGGED IN THE OFFICIAL MISSION MANIFEST.</div>
+                <div class="fp-lbl">CREW DESIGNATION:</div>
+                <input class="reg-input" id="inp-crew" type="text" placeholder="ENTER TEAM NAME" autocomplete="off" />
+                <br><br>
+                <button class="btn-next" onclick="nxt(1)">CONFIRM DESIGNATION ›</button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="reg-step" id="rs2">
+                <div class="step-ind">STEP 02 OF 04 &nbsp;·&nbsp; LAUNCH SITE</div>
+                <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+                <br>
+                <div class="reg-prompt">MISSION CONTROL: CONFIRM LAUNCH SITE.<br>YOUR INSTITUTION OF ORIGIN FOR MISSION
+                    RECORDS.</div>
+                <div class="fp-lbl">LAUNCH SITE (INSTITUTION):</div>
+                <input class="reg-input" id="inp-inst" type="text" placeholder="ENTER COLLEGE / INSTITUTION"
+                    autocomplete="off" />
+                <br><br>
+                <button class="btn-next" onclick="nxt(2)">CONFIRM LAUNCH SITE ›</button>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="reg-step" id="rs3">
+                <div class="step-ind">STEP 03 OF 04 &nbsp;·&nbsp; MISSION ASSIGNMENT</div>
+                <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+                <br>
+                <div class="reg-prompt">MISSION CONTROL: SELECT PRIMARY MISSION.</div>
+                <div class="reg-opts" id="reg-opts">
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: IRONCLAD','ROBO RACE')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">IRONCLAD</div>
+                        <div class="opt-evt">ROBO RACE · ₹30,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: GRIDLOCK','ROBO SOCCER')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">GRIDLOCK</div>
+                        <div class="opt-evt">ROBO SOCCER · ₹30,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: IMMOVABLE','ROBO SUMO')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">IMMOVABLE</div>
+                        <div class="opt-evt">ROBO SUMO · ₹20,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: THREADLINE','LINE FOLLOWER')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">THREADLINE</div>
+                        <div class="opt-evt">LINE FOLLOWER · ₹20,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: LABYRINTH','MAZE')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">LABYRINTH</div>
+                        <div class="opt-evt">MAZE · ₹20,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: SIGNAL','BRAND RUMBLING')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">SIGNAL</div>
+                        <div class="opt-evt">BRAND RUMBLING · ₹10,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: PITCH','SHARK TANK')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">PITCH</div>
+                        <div class="opt-evt">SHARK TANK · ₹10,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: GREY MATTER','IQ WARS 2.0')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">GREY MATTER</div>
+                        <div class="opt-evt">IQ WARS 2.0 · ₹10,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: APOGEE','WATER ROCKET')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">APOGEE</div>
+                        <div class="opt-evt">WATER ROCKET · ₹10,000</div>
+                    </div>
+                    <div class="reg-opt" onclick="selEvt(this,'OPERATION: IGNITION','HACKSPRINT 6.0')">
+                        <div class="opt-dot"></div>
+                        <div class="opt-name">IGNITION</div>
+                        <div class="opt-evt">HACKSPRINT 6.0 · ₹60,000</div>
+                    </div>
+                </div>
+                <button class="btn-next" onclick="nxt(3)">CONFIRM MISSION ›</button>
+            </div>
+
+            <!-- Step 4: GO/NO-GO -->
+            <div class="reg-step" id="rs4">
+                <div class="step-ind">STEP 04 OF 04 &nbsp;·&nbsp; PRE-LAUNCH GO/NO-GO POLL</div>
+                <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+                <br>
+                <div class="reg-prompt">MISSION CONTROL: CONDUCTING PRE-LAUNCH GO/NO-GO POLL.<br>ALL STATIONS CONFIRM
+                    STATUS.</div>
+                <div class="gng-item" id="g1"><span class="gng-lbl">CREW DESIGNATION
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="gng-status">GO
+                        ✓</span></div>
+                <div class="gng-item" id="g2"><span class="gng-lbl">LAUNCH SITE
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+                        class="gng-status">GO ✓</span></div>
+                <div class="gng-item" id="g3"><span class="gng-lbl">MISSION ASSIGNMENT
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="gng-status">GO ✓</span></div>
+                <div class="gng-item" id="g4"><span class="gng-lbl">TEAM READINESS
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="gng-status">GO
+                        ✓</span></div>
+                <div id="gng-final">ALL STATIONS: GO FOR LAUNCH.</div>
+                <button class="btn-next full danger" id="launch-btn" style="display:none;" onclick="submit()">
+                    LAUNCH CONFIRMED · COMMIT TO MISSION
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+     CONFIRMATION
+══════════════════════════════════ -->
+    <section class="section" id="confirmation"
+        style="flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+        <div id="conf-patch"
+            style="margin-bottom:28px;filter:drop-shadow(0 0 55px rgba(240,165,0,.45));animation:float 4s ease-in-out infinite;">
+        </div>
+        <div class="conf-accepted">CREW MANIFEST ACCEPTED.</div>
+        <div class="conf-crew" id="conf-crew"></div>
+        <div class="conf-report">REPORT TO PESCE MANDYA LAUNCH SITE · MAY 15, 2026</div>
+        <br>
+        <button class="btn-next" style="margin-top:18px;" onclick="go('hero')">← RETURN TO MISSION CONTROL</button>
+    </section>
+
+    <style>
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+    </style>
+
+    <script>
+        /* ═══════════════════════════════════════════
+           STATE
+        ═══════════════════════════════════════════ */
+        const S = {
+            section: 'hero',
+            op: '', evt: '', crew: '', inst: ''
+        };
+
+        /* ═══════════════════════════════════════════
+           EVENT DATA
+        ═══════════════════════════════════════════ */
+        const EVT = {
+            rr: {
+                ref: 'NXV-2026-001', op: 'IRONCLAD', mod: 'PROPULSION SYSTEMS', nm: 'ROBO RACE', type: 'TECHNICAL · FIELD OPERATIONS',
+                tag: 'Speed is mission-critical. Hesitation is failure.',
+                obj: 'Navigate a purpose-built track at maximum velocity. Obstacle clearance is mandatory. Fastest completion time wins. One violation and the clock keeps running — without you.',
+                crew: '2 – 4', prize: '₹30,000', lead: 'HITESH K M', comms: '8904902088'
+            },
+            rs: {
+                ref: 'NXV-2026-002', op: 'GRIDLOCK', mod: 'FIELD OPERATIONS BAY', nm: 'ROBO SOCCER', type: 'TECHNICAL · FIELD OPERATIONS',
+                tag: 'The field is contested. Control it.',
+                obj: 'Two crews. One ball. A fixed time window to push it into the opponent\'s goalpost using remote-operated ground vehicles. Real-time strategy and mechanical control decide the outcome.',
+                crew: '2 – 4', prize: '₹30,000', lead: 'YASHAS P & UBAIR', comms: '9901793968'
+            },
+            rsu: {
+                ref: 'NXV-2026-003', op: 'IMMOVABLE', mod: 'TRACTION & TORQUE LAB', nm: 'ROBO SUMO', type: 'TECHNICAL · COMBAT SYSTEMS',
+                tag: 'Traction. Torque. Dominance.',
+                obj: 'Two machines enter a marked arena. One leaves. Victory requires pushing the opposing unit beyond the boundary zone using force, positioning, and mechanical superiority. No compromises.',
+                crew: '2 – 4', prize: '₹20,000', lead: 'PARAMESH H N', comms: '9448176290'
+            },
+            lf: {
+                ref: 'NXV-2026-004', op: 'THREADLINE', mod: 'GUIDANCE & NAVIGATION', nm: 'LINE FOLLOWER', type: 'TECHNICAL · AUTONOMOUS SYSTEMS',
+                tag: 'The path is given. Precision is everything.',
+                obj: 'Design and deploy an autonomous unit capable of detecting and tracking a defined path without human input during the run. Programming discipline and sensor calibration are mission-critical.',
+                crew: '2 – 4', prize: '₹20,000', lead: 'CHIRANTH', comms: '9448176290'
+            },
+            mz: {
+                ref: 'NXV-2026-005', op: 'LABYRINTH', mod: 'PATHFINDING MODULE', nm: 'MAZE', type: 'TECHNICAL · NAVIGATION SYSTEMS',
+                tag: 'Every dead end is data. Adapt.',
+                obj: 'Navigate a remotely controlled vehicle through a walled maze faster than competitors. Bluetooth and radio control permitted. Four-wheel drive recommended. Read your sensors well.',
+                crew: '2 – 4', prize: '₹20,000', lead: 'DEEKSHA G Y & MANOJ', comms: '9353415303'
+            },
+            br: {
+                ref: 'NXV-2026-006', op: 'SIGNAL', mod: 'BRAND FABRICATION LAB', nm: 'BRAND RUMBLING', type: 'NON-TECHNICAL · GROUND OPERATIONS',
+                tag: 'Transmit clearly or get lost in noise.',
+                obj: 'Construct a complete brand identity from a given problem statement within a limited mission window: logo, color palette, UI/UX language, typography, and advertising content. Judged on creative coherence.',
+                crew: '2 – 4', prize: '₹10,000', lead: 'KISHAN S', comms: '8296557523'
+            },
+            st: {
+                ref: 'NXV-2026-007', op: 'PITCH', mod: 'RESOURCE ACQUISITION', nm: 'SHARK TANK', type: 'NON-TECHNICAL · GROUND OPERATIONS',
+                tag: 'Three minutes to change the trajectory.',
+                obj: 'Develop a viable startup concept, build a pitch deck, and present to judges simulating a real-world funding environment. Ideas are evaluated on innovation, scalability, and execution credibility.',
+                crew: '1 – 4', prize: '₹10,000', lead: 'SAROJ', comms: '8873250798'
+            },
+            iq: {
+                ref: 'NXV-2026-008', op: 'GREY MATTER', mod: 'ANALYTICAL SYSTEMS', nm: 'IQ WARS 2.0', type: 'NON-TECHNICAL · GROUND OPERATIONS',
+                tag: 'Logic is the only instrument that doesn\'t malfunction.',
+                obj: 'Consecutive rounds of structured intellectual combat — logical reasoning, rapid problem-solving, and general knowledge under strict time pressure. Accuracy under compression is the only metric.',
+                crew: '1 – 2', prize: '₹10,000', lead: 'KUNAL M K & AISHWARYA S', comms: '7795687774'
+            },
+            wr: {
+                ref: 'NXV-2026-009', op: 'APOGEE', mod: 'LAUNCH SYSTEMS', nm: 'WATER ROCKET', type: 'NON-TECHNICAL · GROUND OPERATIONS',
+                tag: 'Controlled force. Calculated trajectory. Maximum range.',
+                obj: 'Design and launch a water-pressure propulsion system aimed at maximum range and target accuracy. Aerodynamics, propulsion mechanics, and pressure management are your instruments. Get them right.',
+                crew: '2 – 4', prize: '₹10,000', lead: 'P HARSHIT RAO', comms: '9933806575'
+            }
+        };
+
+        /* ═══════════════════════════════════════════
+           STATIC TRANSITION
+        ═══════════════════════════════════════════ */
+        function go(target) {
+            const ov = document.getElementById('static-overlay');
+            const cv = document.getElementById('static-canvas');
+            const ctx = cv.getContext('2d');
+            cv.width = window.innerWidth;
+            cv.height = window.innerHeight;
+            ov.style.display = 'block';
+
+            let f = 0;
+            function drawFrame() {
+                const id = ctx.createImageData(cv.width, cv.height);
+                const d = id.data;
+                for (let i = 0; i < d.length; i += 4) {
+                    const on = Math.random() > .48;
+                    const v = on ? Math.floor(Math.random() * 55 + 8) : 0;
+                    d[i] = v * 1.3;   // R - amber tint
+                    d[i + 1] = v * .65;   // G
+                    d[i + 2] = 0;          // B
+                    d[i + 3] = 210;
+                }
+                ctx.putImageData(id, 0, 0);
+                f++;
+                if (f < 10) requestAnimationFrame(drawFrame);
+                else {
+                    showSec(target);
+                    setTimeout(() => { ov.style.display = 'none'; }, 80);
+                }
+            }
+            drawFrame();
+        }
+
+        /* ═══════════════════════════════════════════
+           SHOW SECTION
+        ═══════════════════════════════════════════ */
+        function showSec(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
+            const el = document.getElementById(id);
+            if (el) el.classList.add('on');
+            window.scrollTo(0, 0);
+
+            document.querySelectorAll('.nd').forEach(d => {
+                d.classList.toggle('on', d.dataset.sec === id);
+            });
+            S.section = id;
+
+            // Restart hacksprint animations
+            if (id === 'hacksprint') {
+                const tb = document.getElementById('tx-block');
+                tb.replaceWith(tb.cloneNode(true));
+                const hb = document.getElementById('hack-brief');
+                hb.style.animation = 'none'; hb.offsetHeight; hb.style.animation = '';
+                const bo = document.querySelector('.btn-omega');
+                if (bo) { bo.style.animation = 'none'; bo.offsetHeight; bo.style.animation = ''; }
+            }
+
+            // Registration init
+            if (id === 'registration') {
+                showStep(1);
+                S.crew = ''; S.inst = ''; S.op = ''; S.evt = '';
+                document.getElementById('inp-crew').value = '';
+                document.getElementById('inp-inst').value = '';
+                document.querySelectorAll('.reg-opt').forEach(o => o.classList.remove('sel'));
+                document.getElementById('launch-btn').style.display = 'none';
+                document.getElementById('gng-final').style.opacity = '0';
+                document.querySelectorAll('.gng-item').forEach(i => i.classList.remove('go'));
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           MODULE SELECTION
+        ═══════════════════════════════════════════ */
+        function selMod(id) {
+            document.querySelectorAll('.mod-g, .reactor-g').forEach(g => g.classList.remove('sel'));
+            const el = document.getElementById('m-' + id);
+            if (el) el.classList.add('sel');
+            const d = EVT[id];
+            if (!d) return;
+            document.getElementById('file-panel').innerHTML = `
+    <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    <div style="font-size:8.5px;letter-spacing:.3em;color:var(--amber-dk);margin:8px 0;">MISSION FILE · REF: ${d.ref}</div>
+    <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    <div class="fp-op">${d.op}</div>
+    <div style="font-size:8.5px;letter-spacing:.2em;color:var(--amber-dk);margin-bottom:4px;">MODULE: ${d.mod}</div>
+    <div class="fp-type">${d.type}</div>
+    <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    <div class="fp-tagline" style="margin-top:10px;">"${d.tag}"</div>
+    <div class="fp-obj">${d.obj}</div>
+    <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    <div style="margin-top:8px;font-size:10px;line-height:2.1;">
+      <span class="fp-lbl">CREW &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-val">${d.crew} PERSONNEL</span><br>
+      <span class="fp-lbl">PRIZE &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-prize" style="font-size:14px;">${d.prize}</span><br>
+      <span class="fp-lbl">MISSION LEAD </span><span class="fp-val">${d.lead}</span><br>
+      <span class="fp-lbl">COMMS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-val">${d.comms}</span>
+    </div>
+    <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+    <div class="fp-status">STATUS: ACCEPTING CREW APPLICATIONS</div>
+    <button class="btn-file" onclick="regFor('OPERATION: ${d.op}','${d.nm}')">SUBMIT CREW MANIFEST</button>
+  `;
+        }
+
+        function regFor(op, evt) {
+            S.op = op; S.evt = evt;
+            go('registration');
+        }
+
+        /* ═══════════════════════════════════════════
+           REGISTRATION
+        ═══════════════════════════════════════════ */
+        function showStep(n) {
+            document.querySelectorAll('.reg-step').forEach(s => s.classList.remove('on'));
+            document.getElementById('rs' + n).classList.add('on');
+        }
+
+        function nxt(from) {
+            if (from === 1) {
+                const v = document.getElementById('inp-crew').value.trim();
+                if (!v) { document.getElementById('inp-crew').focus(); return; }
+                S.crew = v.toUpperCase();
+                showStep(2);
+            } else if (from === 2) {
+                const v = document.getElementById('inp-inst').value.trim();
+                if (!v) { document.getElementById('inp-inst').focus(); return; }
+                S.inst = v.toUpperCase();
+                showStep(3);
+            } else if (from === 3) {
+                if (!S.op) { S.op = 'OPERATION: IRONCLAD'; S.evt = 'ROBO RACE'; }
+                showStep(4);
+                runGoNoGo();
+            }
+        }
+
+        function selEvt(el, op, evt) {
+            document.querySelectorAll('.reg-opt').forEach(o => o.classList.remove('sel'));
+            el.classList.add('sel');
+            S.op = op; S.evt = evt;
+        }
+
+        function runGoNoGo() {
+            ['g1', 'g2', 'g3', 'g4'].forEach((id, i) => {
+                setTimeout(() => { document.getElementById(id).classList.add('go'); }, 600 * (i + 1));
+            });
+            setTimeout(() => { document.getElementById('gng-final').style.opacity = '1'; }, 3200);
+            setTimeout(() => { document.getElementById('launch-btn').style.display = 'block'; }, 3600);
+        }
+
+        function submit() {
+            const ov = document.getElementById('static-overlay');
+            const cv = document.getElementById('static-canvas');
+            const ctx = cv.getContext('2d');
+            cv.width = window.innerWidth; cv.height = window.innerHeight;
+            ctx.fillStyle = 'rgba(240,165,0,.92)';
+            ctx.fillRect(0, 0, cv.width, cv.height);
+            ov.style.display = 'block';
+            setTimeout(() => {
+                ov.style.display = 'none';
+                showSec('confirmation');
+                buildPatch();
+                const op = (S.op || 'OPERATION: IRONCLAD').replace('OPERATION: ', '');
+                document.getElementById('conf-crew').innerHTML =
+                    `MISSION CONTROL CONFIRMS:<br><span style="color:var(--amber);font-family:var(--font-d)">${S.crew || 'YOUR CREW'}</span><br>IS GO FOR <span style="color:var(--amber);font-family:var(--font-d)">OPERATION: ${op}</span><br>LAUNCH SITE: ${S.inst || 'UNKNOWN'}`;
+            }, 420);
+        }
+
+        /* ═══════════════════════════════════════════
+           BUILD CONFIRMATION PATCH
+        ═══════════════════════════════════════════ */
+        function buildPatch() {
+            const crew = (S.crew || 'YOUR CREW').substring(0, 13);
+            const op = (S.op || 'OPERATION: IRONCLAD').replace('OPERATION: ', '');
+            document.getElementById('conf-patch').innerHTML = `
+    <svg width="280" height="280" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <path id="cp1" d="M 40,140 A 100,100 0 0,1 240,140"/>
+        <path id="cp2" d="M 52,155 A 100,100 0 0,0 228,155"/>
+      </defs>
+      <circle cx="140" cy="140" r="133" fill="none" stroke="#C8882A" stroke-width=".8" stroke-dasharray="7,4"/>
+      <circle cx="140" cy="140" r="126" fill="#0C0905"/>
+      <circle cx="140" cy="140" r="126" fill="none" stroke="#F0A500" stroke-width="2"/>
+      <circle cx="140" cy="140" r="116" fill="none" stroke="#C8882A" stroke-width=".5"/>
+      <g fill="#F0A500" opacity=".6">
+        <circle cx="55" cy="95" r="1.5"/><circle cx="75" cy="58" r="1"/><circle cx="108" cy="44" r="1.5"/>
+        <circle cx="225" cy="95" r="1.5"/><circle cx="205" cy="58" r="1"/><circle cx="172" cy="44" r="1.5"/>
+        <circle cx="50" cy="160" r="1"/><circle cx="230" cy="160" r="1"/>
+      </g>
+      <line x1="70" y1="140" x2="210" y2="140" stroke="#F0A500" stroke-width="3"/>
+      <rect x="122" y="122" width="36" height="36" fill="rgba(240,165,0,.13)" stroke="#F0A500" stroke-width="1.5" rx="2"/>
+      <text x="140" y="143" text-anchor="middle" fill="#F0A500" font-size="7" font-family="monospace" letter-spacing="1">CORE</text>
+      <rect x="80" y="130" width="20" height="20" fill="rgba(240,165,0,.06)" stroke="#C8882A" stroke-width=".8"/>
+      <rect x="180" y="130" width="20" height="20" fill="rgba(240,165,0,.06)" stroke="#C8882A" stroke-width=".8"/>
+      <rect x="22" y="133" width="44" height="14" fill="rgba(74,110,138,.28)" stroke="#4A6E8A" stroke-width=".8"/>
+      <rect x="214" y="133" width="44" height="14" fill="rgba(74,110,138,.28)" stroke="#4A6E8A" stroke-width=".8"/>
+      <text fill="#F0A500" font-family="'Orbitron',monospace" font-size="11" font-weight="700" letter-spacing="3">
+        <textPath href="#cp1" startOffset="50%" text-anchor="middle">${crew}</textPath>
+      </text>
+      <text fill="#C8882A" font-family="'Orbitron',monospace" font-size="9" letter-spacing="2.5">
+        <textPath href="#cp2" startOffset="50%" text-anchor="middle">${op}</textPath>
+      </text>
+      <text x="140" y="188" text-anchor="middle" fill="rgba(240,165,0,.45)" font-family="monospace" font-size="7" letter-spacing="2.5">NEXOVATE 2026</text>
+    </svg>`;
+        }
+
+        /* ═══════════════════════════════════════════
+           T-MINUS COUNTDOWN
+        ═══════════════════════════════════════════ */
+        function tick() {
+            const launch = new Date('2026-05-15T09:00:00+05:30');
+            let diff = Math.max(0, launch - Date.now()) / 1000;
+            const lbl = document.getElementById('tminus-lbl');
+            const dig = document.getElementById('tminus-dig');
+            if (diff < 86400) {
+                lbl.textContent = 'FINAL COUNTDOWN';
+                lbl.style.color = dig.style.color = 'var(--red)';
+            } else {
+                lbl.style.color = dig.style.color = '';
+                lbl.textContent = (Math.floor(Date.now() / 6000) % 2 === 0)
+                    ? 'LAUNCH WINDOW OPENS IN'
+                    : 'MAY 15 · 09:00 HRS · PESCE MANDYA';
+            }
+            const dd = Math.floor(diff / 86400);
+            const hh = Math.floor((diff % 86400) / 3600);
+            const mm = Math.floor((diff % 3600) / 60);
+            const ss = Math.floor(diff % 60);
+            const p = n => String(n).padStart(2, '0');
+            dig.textContent = dd > 0
+                ? `${p(dd)}D  ${p(hh)} : ${p(mm)} : ${p(ss)}`
+                : `${p(hh)} : ${p(mm)} : ${p(ss)}`;
+        }
+        setInterval(tick, 1000);
+        tick();
+
+        /* ═══════════════════════════════════════════
+           NAV
+        ═══════════════════════════════════════════ */
+        document.querySelectorAll('.nd').forEach(d => {
+            d.addEventListener('click', () => go(d.dataset.sec));
+        });
+
+        /* INIT */
+        showSec('hero');
+    </script>
+</body>
+
+</html>

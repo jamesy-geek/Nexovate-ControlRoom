@@ -1,0 +1,149 @@
+/* ─── auth.css ────────────────────────────────────────────────────────────── */
+
+.auth-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  padding-top: 80px;    /* clear fixed chrome ticker */
+  box-sizing: border-box;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  border: 1px solid rgba(240, 165, 0, 0.22);
+  background: rgba(240, 165, 0, 0.02);
+  padding: 32px 28px;
+  font-family: var(--font-m);
+  box-sizing: border-box;
+}
+
+/* On small phones, reduce padding */
+@media (max-width: 420px) {
+  .auth-card { padding: 24px 18px; }
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-title {
+  font-family: var(--font-d);
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--amber-dk);
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(240, 165, 0, 0.2);
+  margin-bottom: 28px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 0;
+  font-family: var(--font-m);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--amber-dk);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.auth-tab.active {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
+
+.auth-field {
+  margin-bottom: 20px;
+}
+
+.auth-label {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: var(--amber-dk);
+  margin-bottom: 8px;
+}
+
+.auth-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(240, 165, 0, 0.5);
+  color: var(--amber);
+  font-family: var(--font-m);
+  font-size: 14px;              /* 14px minimum — prevents iOS zoom on focus */
+  letter-spacing: 0.08em;
+  padding: 10px 0;
+  outline: none;
+  box-sizing: border-box;
+  -webkit-appearance: none;     /* remove iOS default styling */
+  border-radius: 0;             /* prevent iOS rounding */
+}
+
+.auth-input:focus { border-bottom-color: var(--amber); }
+.auth-input.error { border-bottom-color: var(--red); }
+
+.auth-err {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--red);
+  min-height: 18px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.auth-btn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  font-family: var(--font-m);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  padding: 16px;               /* tall tap target for mobile */
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 52px;            /* accessible tap target */
+}
+
+.auth-btn:active,
+.auth-btn:hover {
+  background: rgba(240, 165, 0, 0.1);
+}
+
+.auth-divider {
+  text-align: center;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: var(--amber-dk);
+  opacity: 0.5;
+  margin: 20px 0;
+}
+
+.auth-welcome {
+  text-align: center;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--amber-dk);
+  margin-top: 20px;
+}

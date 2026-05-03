@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CREW REGISTRATION · NEXOVATE 2026</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/chrome.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/registration.css">
+  <link rel="stylesheet" href="css/auth.css">
+  
+</head>
+<body data-page="registration">
+  <!-- AUTH GATE — shown when not logged in -->
+  <div id="auth-gate" class="auth-gate" style="display:none;">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-title">MISSION CONTROL</div>
+        <div class="auth-subtitle">CREW LEAD AUTHENTICATION REQUIRED</div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="authShowTab('login')">LOGIN</button>
+        <button class="auth-tab" id="tab-signup" onclick="authShowTab('signup')">SIGN UP</button>
+      </div>
+
+      <!-- Login form -->
+      <div id="auth-login-form">
+        <div class="auth-field">
+          <label class="auth-label" for="auth-email-l">CREW LEAD EMAIL</label>
+          <input class="auth-input" id="auth-email-l" type="email" autocomplete="email"
+                 inputmode="email" placeholder="" oninput="authClearErr()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="auth-pass-l">PASSWORD</label>
+          <input class="auth-input" id="auth-pass-l" type="password" autocomplete="current-password"
+                 placeholder="" oninput="authClearErr()" onkeydown="if(event.key==='Enter') authDoLogin()">
+        </div>
+        <div class="auth-err" id="auth-err-l"></div>
+        <button class="auth-btn" id="auth-login-btn" onclick="authDoLogin()">INITIATE LOGIN</button>
+      </div>
+
+      <!-- Signup form -->
+      <div id="auth-signup-form" style="display:none;">
+        <div class="auth-field">
+          <label class="auth-label" for="auth-email-s">CREW LEAD EMAIL</label>
+          <input class="auth-input" id="auth-email-s" type="email" autocomplete="email"
+                 inputmode="email" placeholder="" oninput="authClearErr()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="auth-pass-s">CREATE PASSWORD</label>
+          <input class="auth-input" id="auth-pass-s" type="password" autocomplete="new-password"
+                 placeholder="MIN 6 CHARACTERS" oninput="authClearErr()">
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="auth-pass-s2">CONFIRM PASSWORD</label>
+          <input class="auth-input" id="auth-pass-s2" type="password" autocomplete="new-password"
+                 placeholder="" oninput="authClearErr()" onkeydown="if(event.key==='Enter') authDoSignup()">
+        </div>
+        <div class="auth-err" id="auth-err-s"></div>
+        <button class="auth-btn" id="auth-signup-btn" onclick="authDoSignup()">CREATE ACCOUNT</button>
+      </div>
+
+      <div class="auth-welcome" id="auth-status"></div>
+    </div>
+  </div>
+  <!-- END AUTH GATE -->
+
+  <div id="reg-content">
+    <main class="page">
+    <div class="reg-panel">
+      <div style="text-align:center;margin-bottom:32px;">
+        <span class="section-lbl">CREW ASSIGNMENT PROTOCOL</span>
+        <div class="section-ttl">CREW MANIFEST</div>
+      </div>
+
+      <!-- Step progress dots -->
+      <div class="step-progress" style="justify-content:center;margin-bottom:28px;">
+        <div class="sp-item" id="sp1">
+          <div class="sp-dot"></div>
+          <span>CREW</span>
+        </div>
+        <div class="sp-dash"></div>
+        <div class="sp-item" id="sp2">
+          <div class="sp-dot"></div>
+          <span>SITE</span>
+        </div>
+        <div class="sp-dash"></div>
+        <div class="sp-item" id="sp3">
+          <div class="sp-dot"></div>
+          <span>MISSION</span>
+        </div>
+        <div class="sp-dash"></div>
+        <div class="sp-item" id="sp4">
+          <div class="sp-dot"></div>
+          <span>LAUNCH</span>
+        </div>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="reg-step on" id="rs1">
+        <div class="step-ind">STEP 01 OF 04 &nbsp;·&nbsp; CREW DESIGNATION</div>
+        <div class="div-line"></div>
+        <br>
+        <div class="reg-prompt" id="sp1-text">MISSION CONTROL: PLEASE CONFIRM CREW DESIGNATION.
+THIS IS THE IDENTIFIER BY WHICH YOUR TEAM WILL BE
+LOGGED IN THE OFFICIAL MISSION MANIFEST.</div>
+        <div class="fp-lbl">CREW DESIGNATION:</div>
+        <input class="reg-input" id="inp-crew" type="text" placeholder="ENTER TEAM NAME" autocomplete="off" oninput="clearErr(this)" />
+        <br><br>
+        <button class="btn btn-next" onclick="nxt(1)">CONFIRM DESIGNATION ›</button>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="reg-step" id="rs2">
+        <div class="step-ind">STEP 02 OF 04 &nbsp;·&nbsp; LAUNCH SITE</div>
+        <div class="div-line"></div>
+        <br>
+        <div class="reg-prompt" id="sp2-text">MISSION CONTROL: CONFIRM LAUNCH SITE.
+YOUR INSTITUTION OF ORIGIN FOR MISSION RECORDS.</div>
+        <div class="fp-lbl">LAUNCH SITE (INSTITUTION):</div>
+        <input class="reg-input" id="inp-inst" type="text" placeholder="ENTER COLLEGE / INSTITUTION" autocomplete="off" oninput="clearErr(this)" />
+        <br><br>
+        <button class="btn btn-next" onclick="nxt(2)">CONFIRM LAUNCH SITE ›</button>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="reg-step" id="rs3">
+        <div class="step-ind">STEP 03 OF 04 &nbsp;·&nbsp; MISSION ASSIGNMENT</div>
+        <div class="div-line"></div>
+        <br>
+        <div class="reg-prompt" id="sp3-text">MISSION CONTROL: SELECT PRIMARY MISSION.
+CHOOSE THE OPERATION YOUR CREW IS VOLUNTEERING FOR.
+EACH CREW MAY SUBMIT FOR ONE PRIMARY MISSION.</div>
+        <br>
+        <div class="reg-opts" id="evt-list">
+          <!-- Populated by buildEvtList() in registration.js -->
+        </div>
+        <button class="btn btn-next" id="step3-btn" style="display:none;" onclick="nxt(3)">CONFIRM MISSION ›</button>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="reg-step" id="rs4">
+        <div class="step-ind">STEP 04 OF 04 &nbsp;·&nbsp; PRE-LAUNCH GO/NO-GO POLL</div>
+        <div class="div-line"></div>
+        <br>
+        <div class="reg-prompt" id="sp4-text">MISSION CONTROL: CONDUCTING PRE-LAUNCH GO/NO-GO POLL.
+ALL STATIONS CONFIRM STATUS.</div>
+        <br>
+        <div class="gng-list">
+          <div class="gng-item" id="g1">
+            <span class="gng-lbl">CREW DESIGNATION</span>
+            <span class="gng-val" id="gv1">PENDING…</span>
+          </div>
+          <div class="gng-item" id="g2">
+            <span class="gng-lbl">LAUNCH SITE</span>
+            <span class="gng-val" id="gv2">PENDING…</span>
+          </div>
+          <div class="gng-item" id="g3">
+            <span class="gng-lbl">MISSION ASSIGNMENT(S)</span>
+            <span class="gng-val" id="gv3">PENDING…</span>
+          </div>
+          <div class="gng-item" id="g4">
+            <span class="gng-lbl">TEAM READINESS</span>
+            <span class="gng-val" id="gv4">PENDING…</span>
+          </div>
+        </div>
+        <div id="gng-final" class="gng-final-text" style="opacity:0;margin:16px 0;">ALL STATIONS: GO FOR LAUNCH.</div>
+        <button class="btn btn-next full danger" id="launch-btn" style="display:none;" onclick="submit()">
+          LAUNCH CONFIRMED · COMMIT TO MISSION
+        </button>
+      </div>
+
+    </div>
+    </main>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/events-data.js"></script>
+  <script src="js/registration.js"></script>
+  <script src="js/chrome.js"></script>
+  <script src="js/navigate.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', authGateInit);</script>
+</body>
+</html>

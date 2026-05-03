@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERATION IGNITION · NEXOVATE 2026</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/chrome.css">
+  <link rel="stylesheet" href="css/transitions.css">
+  <link rel="stylesheet" href="css/hacksprint.css">
+  
+  <script src="js/navigate.js"></script>
+  <script src="js/chrome.js"></script>
+
+</head>
+<body data-page="hacksprint">
+  <main class="page">
+    <div class="tx-block" id="tx-block">
+      <span class="tx-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+      <span class="tx-line">MISSION CONTROL TO ALL STATIONS.</span>
+      <span class="tx-line">THIS IS A PRIORITY TRANSMISSION.</span>
+      <span class="tx-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
+      <span class="tx-line">OPERATION: IGNITION IS NOW ACTIVE.</span>
+      <span class="tx-line">CLASSIFICATION: OMEGA LEVEL · 24 HOURS CONTINUOUS.</span>
+      <span class="tx-line">THIS IS NOT A DRILL.</span>
+    </div>
+
+    <div class="hack-brief" id="hack-brief">
+      <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <div class="fp-op">HACKSPRINT 6.0</div>
+      <div style="font-size:9px;letter-spacing:.3em;color:var(--amber-dk);margin-bottom:14px;">OPERATION: IGNITION · OMEGA CLEARANCE</div>
+      <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <br>
+      <span class="fp-lbl">MISSION CLASS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-val">OMEGA · UNRESTRICTED</span><br>
+      <span class="fp-lbl">DURATION &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-val">24 HOURS CONTINUOUS OPERATION</span><br>
+      <span class="fp-lbl">CREW REQUIREMENT &nbsp;</span><span class="fp-val">3 – 4 PERSONNEL</span><br>
+      <span class="fp-lbl">MISSION VALUE &nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-prize">₹60,000</span><br>
+      <br>
+      <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <br>
+      <div style="font-size:9px;letter-spacing:.3em;color:var(--amber-dk);margin-bottom:8px;">ACTIVE MISSION DOMAINS:</div>
+      <div class="hack-domain">DOMAIN A · ARTIFICIAL INTELLIGENCE</div>
+      <div class="hack-domain">DOMAIN B · AGRICULTURE & HEALTHCARE TECHNOLOGY</div>
+      <div class="hack-domain">DOMAIN C · INTERNET OF THINGS</div>
+      <br>
+      <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <br>
+      <div style="font-size:9px;letter-spacing:.3em;color:var(--amber-dk);margin-bottom:8px;">MISSION PHASES:</div>
+      <div class="hack-phase-row"><span>PHASE 1 — PROBLEM ACQUISITION</span><span>[0–2 HRS]</span></div>
+      <div class="hack-phase-row"><span>PHASE 2 — SYSTEMS DEVELOPMENT</span><span>[2–20 HRS]</span></div>
+      <div class="hack-phase-row"><span>PHASE 3 — MISSION PRESENTATION</span><span>[20–24 HRS]</span></div>
+      <br>
+      <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+      <br>
+      <span class="fp-lbl">MISSION LEADS &nbsp;</span><span class="fp-val">SONAL H · ASHWIN S</span><br>
+      <span class="fp-lbl">COMMS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="fp-val">9591787616 · 8951728170</span>
+      <br>
+      <button class="btn btn-omega" onclick="regFor()">
+        INITIATE CREW REGISTRATION · OPERATION IGNITION
+      </button>
+    </div>
+  </main>
+<script>
+  function regFor() {
+    sessionStorage.setItem('preselect', 'hacksprint');
+    navigate('registration');
+  }
+</script>
+</body>
+</html>
