@@ -2,7 +2,7 @@
 // Sends registration data to Google Sheets via a deployed Apps Script Web App.
 // Replace SHEETS_WEBHOOK_URL with your deployed Apps Script URL before launch.
 
-const SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzotG7sBEtZAFnReT-OAIcoD-oFp8JOpkIN_QmigRQ-BHYR6LnMAxrrt8F_nRRasHFV5g/exec';
+const SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzzMOpmg6vdDPmqAzK_kyMMqd67PoJvOhFw6yS5PN_EGAx6s2h72yi_AxYzZp0eEIz5/exec';
 
 /**
  * Posts team registration data to Google Sheets.
@@ -11,16 +11,16 @@ const SHEETS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzotG7sBEtZA
  */
 async function postToSheets(teamData, email) {
   if (!SHEETS_WEBHOOK_URL || SHEETS_WEBHOOK_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
-    console.warn('[sheets.js] SHEETS_WEBHOOK_URL not set — skipping Google Sheets sync.');
+    console.warn('[sheets.js] SHEETS_WEBHOOK_URL not set — skipping.');
     return;
   }
 
   const rows = teamData.events.map(evt => ({
-    eventId: evt.evtId,           // e.g. 'roborace'
-    eventName: evt.evt,             // e.g. 'ROBO RACE'
+    eventId: evt.evtId,
+    eventName: evt.evt,
     teamName: teamData.crew,
-    leadName: teamData.lead,
-    phone: teamData.phone,
+    leadName: teamData.lead || '',
+    phone: teamData.phone || '',
     email: email || '',
     inst: teamData.inst,
     teamId: teamData.id,
@@ -28,6 +28,7 @@ async function postToSheets(teamData, email) {
   }));
 
   try {
+    console.log('[sheets.js] Attempting sync to Google Sheets...', { rows });
     await fetch(SHEETS_WEBHOOK_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -35,8 +36,8 @@ async function postToSheets(teamData, email) {
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ rows }),
     });
-    console.log('[sheets.js] Data sent to sync.');
+    console.log('[sheets.js] Sync request dispatched.');
   } catch (err) {
-    console.error('[sheets.js] Sync failed:', err);
+    console.error('[sheets.js] Sync request failed to dispatch:', err);
   }
 }
