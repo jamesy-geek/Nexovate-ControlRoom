@@ -273,7 +273,6 @@ function submit() {
   }
 
   // Link this team to the logged-in user account
-  const sessionEmail = getSession();
   if (sessionEmail && typeof linkTeamToUser === 'function') {
     linkTeamToUser(sessionEmail, teamId);
   }
