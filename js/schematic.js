@@ -34,7 +34,6 @@ function selMod(id) {
     </div>
     <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div class="fp-status">STATUS: ACCEPTING CREW APPLICATIONS</div>
-    <button class="btn btn-file" onclick="regFor('${id}')">SUBMIT CREW MANIFEST</button>
   `;
 }
 
