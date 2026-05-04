@@ -71,16 +71,8 @@
 .reg-opt.sel { background: rgba(240,165,0,.08); border-color: rgba(240,165,0,.2); }
 .reg-opt.sel .ro-bullet { color: var(--amber); }
 .ro-bullet { color: var(--amber); font-size: 12px; width: 12px; }
-.ro-nm-hi {
-  font-family: var(--font-d);
-  font-size: 12px;
-  letter-spacing: .16em;
-  color: var(--offwhite);
-  flex: 1;
-}
-.reg-opt.sel .ro-nm-hi {
-  color: var(--amber);
-}
+.ro-op { color: var(--amber); font-family: var(--font-d); font-size: 9px; letter-spacing: .14em; flex: 1; }
+.ro-nm { color: var(--amber-dk); font-size: 9px; letter-spacing: .1em; }
 .omega-badge {
   font-size: 7px; letter-spacing: .3em; color: var(--red);
   border: 1px solid var(--red); padding: 1px 4px;

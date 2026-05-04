@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.insertAdjacentHTML('afterbegin', `
     <div id="ticker">
       <div id="ticker-inner">
-        LAUNCH WINDOW OPENS IN -- : -- : -- NEXOVATE 2026 &nbsp;&middot;&nbsp; MISSION STATUS: GO &nbsp;&middot;&nbsp; PESCE MANDYA LAUNCH SITE &nbsp;&middot;&nbsp; MAY 22–23, 2026 &nbsp;&middot;&nbsp; ALL SYSTEMS NOMINAL &nbsp;&middot;&nbsp; PRIZE MANIFEST: ₹2,00,000 &nbsp;&middot;&nbsp; 24 HOURS CONTINUOUS &nbsp;&middot;&nbsp; CREW REGISTRATIONS OPEN &nbsp;&middot;&nbsp; T-MINUS INITIATED &nbsp;&middot;&nbsp; NEXOVATE 2026 &nbsp;&middot;&nbsp; MISSION STATUS: GO &nbsp;&middot;&nbsp; PESCE MANDYA LAUNCH SITE &nbsp;&middot;&nbsp; MAY 22–23, 2026 &nbsp;&middot;&nbsp; ALL SYSTEMS NOMINAL &nbsp;&middot;&nbsp; PRIZE MANIFEST: ₹2,00,000 &nbsp;&middot;&nbsp;
+        LAUNCH WINDOW OPENS IN -- : -- : -- NEXOVATE 2026 &nbsp;&middot;&nbsp; MISSION STATUS: GO &nbsp;&middot;&nbsp; PESCE MANDYA LAUNCH SITE &nbsp;&middot;&nbsp; MAY 22–23, 2026 &nbsp;&middot;&nbsp; ALL SYSTEMS NOMINAL &nbsp;&middot;&nbsp; PRIZE MANIFEST: ₹2,00,000 &nbsp;&middot;&nbsp; HACKSPRINT 6.0 &nbsp;&middot;&nbsp; 24 HOURS CONTINUOUS &nbsp;&middot;&nbsp; CREW REGISTRATIONS OPEN &nbsp;&middot;&nbsp; T-MINUS INITIATED &nbsp;&middot;&nbsp; NEXOVATE 2026 &nbsp;&middot;&nbsp; MISSION STATUS: GO &nbsp;&middot;&nbsp; PESCE MANDYA LAUNCH SITE &nbsp;&middot;&nbsp; MAY 22–23, 2026 &nbsp;&middot;&nbsp; ALL SYSTEMS NOMINAL &nbsp;&middot;&nbsp; PRIZE MANIFEST: ₹2,00,000 &nbsp;&middot;&nbsp;
       </div>
     </div>
   `);
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navItems = [
     { key: 'hero',         lbl: 'LAUNCH',   url: 'index.html'       },
     { key: 'dossier',      lbl: 'DOSSIER',  url: 'dossier.html'     },
+    { key: 'hacksprint',   lbl: 'REACTOR',  url: 'hacksprint.html'  },
     { key: 'registration', lbl: 'CREW REG', url: 'registration.html'},
   ];
   const dotsHTML = navItems.map(n =>

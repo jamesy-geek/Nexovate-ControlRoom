@@ -3,13 +3,11 @@ const REG_FORM_URL = 'YOUR_GOOGLE_FORM_URL_HERE'; // ← replace before deployme
 const EXTERNAL_PAYMENT_URL = 'YOUR_EXTERNAL_PAYMENT_URL_HERE'; // ← replace with actual URL before deployment
 
 const S = {
-  crew:   '',
-  lead:   '',   // ← NEW: team lead name
-  phone:  '',   // ← NEW: contact number
-  inst:   '',
-  events: [],
-  stepVisited: [false, false, false, false],
-  gngTimers: []
+  crew:         '',
+  inst:         '',
+  events:       [],   // array of { op, evt, evtId } — one entry per selected event
+  stepVisited:  [false, false, false, false],
+  gngTimers:    []
 };
 
 const STEP_PROMPTS = [
@@ -78,7 +76,8 @@ function buildEvtList() {
     html += `
       <div class="reg-opt" onclick="selEvt(this, '${d.op}', '${d.nm}', '${id}')">
         <span class="ro-bullet">○</span>
-        <span class="ro-nm-hi">${d.nm}</span>
+        <span class="ro-op">OPERATION: ${d.op}</span>
+        <span class="ro-nm">${d.nm}</span>
       </div>
     `;
   });
@@ -90,7 +89,8 @@ function buildEvtList() {
     html += `
       <div class="reg-opt" onclick="selEvt(this, '${d.op}', '${d.nm}', '${id}')">
         <span class="ro-bullet">○</span>
-        <span class="ro-nm-hi">${d.nm}</span>
+        <span class="ro-op">OPERATION: ${d.op}</span>
+        <span class="ro-nm">${d.nm}</span>
       </div>
     `;
   });
@@ -101,7 +101,8 @@ function buildEvtList() {
     html += `
       <div class="reg-opt" onclick="selEvt(this, '${hk.op}', '${hk.nm}', 'hacksprint')">
         <span class="ro-bullet">○</span>
-        <span class="ro-nm-hi">${hk.nm} <span class="omega-badge">OMEGA</span></span>
+        <span class="ro-op">OPERATION: ${hk.op}</span>
+        <span class="ro-nm">${hk.nm} <span class="omega-badge">OMEGA</span></span>
       </div>
     `;
   }
@@ -164,18 +165,12 @@ function selEvt(el, op, evt, id) {
 }
 
 function nxt(from) {
-if (from === 1) {
-  const crew  = document.getElementById('inp-crew').value.trim();
-  const lead  = document.getElementById('inp-lead').value.trim();
-  const phone = document.getElementById('inp-phone').value.trim();
-  if (!crew)  { shakeInput('inp-crew');  return; }
-  if (!lead)  { shakeInput('inp-lead');  return; }
-  if (!phone) { shakeInput('inp-phone'); return; }
-  S.crew  = crew.toUpperCase();
-  S.lead  = lead.toUpperCase();
-  S.phone = phone;
-  setStep(2);
-} else if (from === 2) {
+  if (from === 1) {
+    const v = document.getElementById('inp-crew').value.trim();
+    if (!v) { shakeInput('inp-crew'); return; }
+    S.crew = v.toUpperCase();
+    setStep(2);
+  } else if (from === 2) {
     const v = document.getElementById('inp-inst').value.trim();
     if (!v) { shakeInput('inp-inst'); return; }
     S.inst = v.toUpperCase();
@@ -206,11 +201,9 @@ function runGoNoGo() {
 
   const items = [
     { id: 'g1', vid: 'gv1', val: S.crew },
-    { id: 'g2', vid: 'gv2', val: S.lead },
-    { id: 'g3', vid: 'gv3', val: S.phone },
-    { id: 'g4', vid: 'gv4', val: S.inst },
-    { id: 'g5', vid: 'gv5', val: evtSummary || '—' },
-    { id: 'g6', vid: 'gv6', val: 'CONFIRMED' },
+    { id: 'g2', vid: 'gv2', val: S.inst },
+    { id: 'g3', vid: 'gv3', val: evtSummary || '—' },
+    { id: 'g4', vid: 'gv4', val: 'CONFIRMED' },
   ];
 
   // Reset state
@@ -241,40 +234,23 @@ function runGoNoGo() {
   S.gngTimers.push(setTimeout(() => {
     const fin = document.getElementById('gng-final');
     if (fin) fin.style.opacity = '1';
-  }, 4400));
+  }, 3200));
 
   S.gngTimers.push(setTimeout(() => {
     const btn = document.getElementById('launch-btn');
     if (btn) btn.style.display = 'block';
-  }, 4800));
+  }, 3600));
 }
 
-async function submit() {
+function submit() {
   const teamId = 'NXV-' + Date.now().toString(36).toUpperCase();
-  let crewNum = 1;
-
-  // Try to get sequential number from Supabase
-  if (window.supabaseClient) {
-    try {
-      const { count, error } = await window.supabaseClient
-        .from('teams')
-        .select('*', { count: 'exact', head: true });
-      if (!error && count !== null) {
-        crewNum = count + 1;
-      }
-    } catch (e) {
-      console.warn('[registration.js] Could not fetch team count, using default.', e);
-    }
-  }
 
   const teamData = {
     id:        teamId,
-    crewNum:   crewNum, 
     crew:      S.crew,
-    lead:      S.lead,
-    phone:     S.phone,
     inst:      S.inst,
-    events:    S.events,
+    events:    S.events,     // array of { op, evt, evtId }
+    // Keep legacy fields for backwards compatibility
     op:        S.events[0]?.op || '',
     evt:       S.events[0]?.evt || '',
     evtId:     S.events[0]?.evtId || '',
@@ -283,12 +259,8 @@ async function submit() {
 
   if (typeof saveTeam === 'function') saveTeam(teamData);
 
-  const sessionEmail = getSession();
-  if (typeof postToSheets === 'function') {
-    postToSheets(teamData, sessionEmail || '');
-  }
-
   // Link this team to the logged-in user account
+  const sessionEmail = getSession();
   if (sessionEmail && typeof linkTeamToUser === 'function') {
     linkTeamToUser(sessionEmail, teamId);
   }
@@ -311,5 +283,5 @@ async function submit() {
     } else {
       window.location.href = 'profile.html?id=' + teamId;
     }
-  }, 600);
+  }, 300);
 }
