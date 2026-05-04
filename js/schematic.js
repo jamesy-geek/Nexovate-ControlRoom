@@ -2,6 +2,11 @@
 // Manages module selection and file panel updates in dossier.html
 
 function selMod(id) {
+  // If hacksprint: navigate to that page instead
+  if (id === 'hacksprint') {
+    staticCut(() => { window.location.href = 'hacksprint.html'; });
+    return;
+  }
   playBlip();
   // Deselect all
   document.querySelectorAll('.mod-g, .reactor-g').forEach(g => g.classList.remove('sel'));
@@ -14,8 +19,8 @@ function selMod(id) {
     <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div style="font-size:8.5px;letter-spacing:.3em;color:var(--amber-dk);margin:8px 0;">MISSION FILE · REF: ${d.ref}</div>
     <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-    <div class="fp-op">${d.op}</div>
-    <div style="font-size:8.5px;letter-spacing:.2em;color:var(--amber-dk);margin-bottom:4px;">MODULE: ${d.mod}</div>
+    <div class="fp-op">${d.nm}</div>
+    <div style="font-size:8.5px;letter-spacing:.2em;color:var(--amber-dk);margin-bottom:4px;">OPERATION: ${d.op} · MODULE: ${d.mod}</div>
     <div class="fp-type">${d.type}</div>
     <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div class="fp-tagline" style="margin-top:10px;">"${d.tag}"</div>
@@ -29,6 +34,7 @@ function selMod(id) {
     </div>
     <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div class="fp-status">STATUS: ACCEPTING CREW APPLICATIONS</div>
+    <button class="btn btn-file" onclick="regFor('${id}')">SUBMIT CREW MANIFEST</button>
   `;
 }
 

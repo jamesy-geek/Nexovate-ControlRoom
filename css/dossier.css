@@ -107,18 +107,19 @@
     gap: 3px;
   }
 
-  .mml-op {
+  .mml-nm {
     font-family: var(--font-d);
     font-size: 11px;
     letter-spacing: .18em;
-    color: var(--amber-dk);
+    color: var(--amber);
   }
 
-  .mml-nm {
-    font-size: 9px;
-    letter-spacing: .14em;
+  .mml-op {
+    font-size: 8px;
+    letter-spacing: .25em;
     color: var(--amber-dk);
-    opacity: .7;
+    opacity: .6;
+    text-transform: uppercase;
   }
 
   .mml-right {
@@ -185,18 +186,18 @@
 .mod-rect { fill: rgba(240,165,0,.04); stroke: var(--amber-dk); stroke-width: .9; transition: all .2s; }
 .mod-g:hover .mod-rect,
 .mod-g.sel  .mod-rect { fill: rgba(240,165,0,.14); stroke: var(--amber); stroke-width: 1.5; }
-.mod-op { font-family: var(--font-d); font-size: 7.5px; fill: var(--amber); text-anchor: middle; letter-spacing: .12em; }
-.mod-nm { font-family: var(--font-m); font-size: 6.5px; fill: var(--amber-dk); text-anchor: middle; letter-spacing: .06em; }
-.mod-g:hover .mod-nm,
-.mod-g.sel  .mod-nm { fill: var(--offwhite); }
+.mod-nm { font-family: var(--font-d); font-size: 7.5px; fill: var(--amber); text-anchor: middle; letter-spacing: .12em; }
+.mod-op { font-family: var(--font-m); font-size: 6px; fill: var(--amber-dk); text-anchor: middle; letter-spacing: .06em; opacity: 0.6; }
+.mod-g:hover .mod-op,
+.mod-g.sel  .mod-op { fill: var(--offwhite); }
 
 /* Non-technical modules (blue stroke) */
 .nt-rect { fill: rgba(74,110,138,.06); stroke: #4A6E8A; stroke-width: .9; transition: all .2s; }
 .mod-g:hover .nt-rect,
 .mod-g.sel  .nt-rect { fill: rgba(74,110,138,.18); stroke-width: 1.5; }
-.nt-op { font-family: var(--font-d); font-size: 7px; fill: #4A6E8A; text-anchor: middle; letter-spacing: .1em; }
-.nt-nm { font-family: var(--font-m); font-size: 6px; fill: #4A6E8A; text-anchor: middle; }
-.mod-g:hover .nt-nm { fill: var(--offwhite); }
+.nt-nm { font-family: var(--font-d); font-size: 7px; fill: #4A6E8A; text-anchor: middle; letter-spacing: .12em; }
+.nt-op { font-family: var(--font-m); font-size: 5.5px; fill: rgba(74,110,138,0.7); text-anchor: middle; }
+.mod-g:hover .nt-op { fill: var(--offwhite); }
 
 /* Reactor core */
 .reactor-g { cursor: crosshair; }
