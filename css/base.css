@@ -91,15 +91,20 @@ body {
   font-size: 13px;
   color: var(--bg);
   background: var(--amber);
-  padding: 16px 52px;
+  padding: 18px 60px;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  gap: 6px;
+  /* Use a slightly larger clip offset to ensure text safety */
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
   animation: pulse-btn 2.2s ease-in-out infinite;
-  min-width: 280px;
+  width: auto;
+  max-width: 90vw;
+  text-align: center;
+  line-height: 1.3;
+  white-space: normal; /* Allow wrapping to keep text inside the box */
 }
 .btn-subtitle {
   display: block;

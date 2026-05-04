@@ -52,10 +52,19 @@ body[data-page="hacksprint"]::before {
 .btn-omega {
   font-family: var(--font-d); font-size: 13px; letter-spacing: .3em;
   color: var(--bg); background: var(--amber);
-  border: 2px solid var(--red); padding: 18px 52px;
+  border: 2px solid var(--red); padding: 18px 40px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
   box-shadow: 0 0 0 4px rgba(192,57,43,.3), 0 0 32px rgba(240,165,0,.3);
   animation: omega-pulse 1.8s ease-in-out infinite;
   margin-top: 32px; cursor: pointer;
+  white-space: normal;
+  line-height: 1.4;
+  width: auto;
 }
 .btn-omega:hover { background: var(--offwhite); animation: none; }
 @keyframes omega-pulse {
