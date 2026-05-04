@@ -2,24 +2,26 @@
 // Manages module selection and file panel updates in dossier.html
 
 function selMod(id) {
-  // If hacksprint: navigate to that page instead
-  if (id === 'hacksprint') {
-    staticCut(() => { window.location.href = 'hacksprint.html'; });
-    return;
-  }
   playBlip();
   // Deselect all
   document.querySelectorAll('.mod-g, .reactor-g').forEach(g => g.classList.remove('sel'));
   const el = document.getElementById('m-' + id);
   if (el) el.classList.add('sel');
+  
   // Update file panel
   const d = EVT[id];
   if (!d) return;
+
+  // Custom footer for hacksprint card
+  const cardFooter = (id === 'hacksprint') 
+    ? `<button class="btn btn-file" onclick="navigate('hacksprint.html')" style="background:var(--red);color:#fff;margin-top:15px;box-shadow:0 0 15px rgba(192,57,43,0.3)">VIEW FULL BRIEFING ›</button>`
+    : '';
+
   document.getElementById('file-panel').innerHTML = `
     <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div style="font-size:8.5px;letter-spacing:.3em;color:var(--amber-dk);margin:8px 0;">MISSION FILE · REF: ${d.ref}</div>
     <div class="div-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
-    <div class="fp-op">${d.nm}</div>
+    <div class="fp-op" style="${id === 'hacksprint' ? 'font-size:24px;color:var(--amber);text-shadow:0 0 20px var(--amber);' : ''}">${d.nm}</div>
     <div style="font-size:8.5px;letter-spacing:.2em;color:var(--amber-dk);margin-bottom:4px;">OPERATION: ${d.op} · MODULE: ${d.mod}</div>
     <div class="fp-type">${d.type}</div>
     <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
@@ -34,6 +36,7 @@ function selMod(id) {
     </div>
     <div class="div-line" style="margin-top:10px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
     <div class="fp-status">STATUS: ACCEPTING CREW APPLICATIONS</div>
+    ${cardFooter}
   `;
 }
 

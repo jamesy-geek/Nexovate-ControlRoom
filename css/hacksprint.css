@@ -33,6 +33,13 @@ body[data-page="hacksprint"]::before {
   font-family: var(--font-d); font-size: 32px; font-weight: 900;
   letter-spacing: .22em; color: var(--amber); margin-top: 8px;
 }
+.hack-title-highlight {
+  font-size: 42px !important;
+  color: var(--offwhite) !important;
+  text-shadow: 0 0 30px var(--amber), 0 0 60px rgba(240,165,0,0.4);
+  letter-spacing: 0.3em;
+  margin-bottom: 15px;
+}
 .hack-sub { font-family: var(--font-m); font-size: 14px; letter-spacing: .38em; color: var(--offwhite); }
 .divider-line { width: 100%; border-top: 1px solid rgba(240,165,0,0.3); margin: 20px 0; }
 .hack-brief {
